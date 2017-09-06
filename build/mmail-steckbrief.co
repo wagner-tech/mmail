@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ "$1" != "TOP" ]; then
+	echo "Es wird nur der Build mit der aktuellen Version unterstützt"
+	exit 1
+fi
+
+if [ -d GF ]
+then
+	pushd GF >/dev/null
+		svn up
+	popd >/dev/null
+else
+	svn co https://wagnertech.de/svn/verwaltung/GF
+fi
+
+pushd .. >/dev/null
+	ln -sf ../mMail/doc/Steckbrief.tex .
+	ln -sf src/GF/wagner_tech_briefbogen_blau_fs1.pdf .
+	ln -sf mmail-steckbrief.pre make.pre
+	ln -sf projects/tools/tex/wallpaper.sty .
+	echo "COMPILE_TARGET = Steckbrief.pdf" >make.pre
+popd >/dev/null

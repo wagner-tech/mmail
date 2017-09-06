@@ -1,0 +1,9 @@
+Package: mmail
+Version: 0.1-%BUILD%
+Section: base
+Priority: optional
+Architecture: all
+Depends: gnupg, python
+Maintainer: WagnerTech UG <mail@wagnertech.de>
+Description: mMail: A secure mailing facility
+

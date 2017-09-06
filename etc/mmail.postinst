@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+# stop postfix
+#systemctl stop postfix
+/etc/init.d/postfix stop
+
+# create further postfix instances
+pushd /etc/postfix/free_pass 1>/dev/null
+	if ! test -e master.cf
+	then
+		cp ../mmail/free_pass/master.cf .
+		cp ../mmail/free_pass/main.cf .
+		cp ../dynamicmaps.cf .
+	fi
+popd 1>/dev/null
+pushd /etc/postfix/tls_smtp 1>/dev/null
+	if ! test -e master.cf
+	then
+		cp ../mmail/tls_smtp/master.cf .
+		cp ../mmail/tls_smtp/main.cf .
+		cp ../dynamicmaps.cf .
+	fi
+popd 1>/dev/null
+#pushd /etc/postfix 1>/dev/null
+#	if ! test -e master.cf.orig
+#	then
+#		mv main.cf main.cf.orig
+#		mv master.cf master.cf.orig
+#		sed "s/%HOSTNAME%/$(hostname)/" mmail/main.cf > main.cf
+#		cp mmail/master.cf .
+#	fi
+#popd 1>/dev/null
+
+# check existence of mmail user
+if ! grep mmail /etc/passwd >/dev/null
+then
+	adduser --quiet --disabled-login --gecos mmail mmail
+fi
+
+# stop postfix
+#systemctl start postfix
+/etc/init.d/postfix start || true
+

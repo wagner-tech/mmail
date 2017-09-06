@@ -1,0 +1,70 @@
+\documentclass[a4paper]{scrartcl}
+\usepackage[utf8]{inputenc}% muss zum Editor passen -> http://texwelt.de/wissen/fragen/2656/
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{multicol}
+\usepackage{wallpaper}
+% \usepackage{hyperref} 
+
+\usepackage{geometry}
+\geometry{a4paper,left=25mm,right=25mm, top=25mm, bottom=3cm}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\title{mMail: Sicherheit im Mailverkehr durch Verschlüsselung}
+\author{\normalsize{WagnerTech UG, Turfstr. 18a, 81929 München, www.wagnertech.de}}
+\date{\vspace{-6ex}}
+
+\ULCornerWallPaper{1}{wagner_tech_briefbogen_blau_fs1.pdf}
+
+\begin{document}
+\pagenumbering{gobble} % no page numbers
+
+\maketitle
+
+\begin{abstract}
+Nach dem Bekanntwerden der geheimdienstlichen Tätigkeiten im Internet ist es Allgemeingut geworden, dass sensible
+Firmendaten im ungeschützten Internet nichts zu suchen haben. Wie soll aber eine Firma im täglichen Betrieb für
+die nötige Sicherheit sorgen, ohne den freien Informationsaustausch in unnötiger Weise zu behindern? Dieser Artikel
+zeigt, wie mit entsprechenden Einstellungen im \emph{mail transfer agent} (MTA) \emph{postfix} für eine den 
+Anforderungen eines Unternehmens graduelle Sicherheit realisiert werden kann.
+\end{abstract}
+
+\begin{multicols}{2}
+Eine Sicherung des Mailverkehrs durch Verschlüsselung kann auf verschiedenen Ebenen erfolgen. Als sicherste Lösung gilt
+dabei die Ende-zu-Ende-Verschlüsselung über ein \emph{public key}-Verfahren. Bei diesem Verfahren werden die \emph{e-mails}
+mit dem öffentlichen Schlüssel des Empfängers\footnote{Die grammatikalisch männliche Form umfasse sämtliche 
+Geschlechtsausprägungen. Daher wird diese Form Formulierungen vorgezogen, die sich auf zwei Geschlechter beschränken. 
+Bei allen anderen Ausdrücken wird in derselben Weise verfahren.} 
+verschlüsselt. Nur der Empfänger der Mail kann die 
+so verschlüsselte Mail mit seinem privaten Schlüssel wieder entschlüsseln. Dieses Verfahren hat folgende Nachteile:
+	\begin{itemize}
+	\item Alle Teilnehmer müssen die öffentlichen Schlüssel ihrer Kommunikationspartner auf ihrem Endgerät zur Verfügung
+		haben.
+	\item Ein Teilnehmer muss auf jedem seiner Endgeäte (PC, Laptop, Smartphone) seinen privaten Schlüssel zur Verfügung
+		haben.
+	\item Die Vervielfältigung des privaten Schlüssels ist eine potentielle Sicherheitslücke, wenn bei der Übertragung
+		ungeeignete Methoden (z.B. Verschicken mit Mail, Clouddienste) verwendet werden.
+	\end{itemize}
+Eine andere Form der Verschlüsselung ist die Transportverschlüsselung. Hier werden die Daten zwischen MTAs über das 
+ssl-Protokoll verschlüsselt ausgetauscht. Dieses Verfahren hat folgende Nachteile:
+	\begin{itemize}
+	\item In den Mailfächern der Server liegen die Daten in unverschlüsselter Form vor.
+	\item Ein Austausch über Transportverschlüsselung darf daher nur zu MTAs hin erfolgen, auf denen die (unverschlüsselten)
+		Mails sicher liegen. Also nicht zu einem der großen Provider, auf die interessierte Stellen Zugriff haben.
+	\end{itemize}
+mMail ist ein \emph{postfix}-Zusatz, der folgenden Ansatz verfolgt:
+	\begin{itemize}
+	\item Der Mailverkehr innerhalb der Firma kann unverschlüsselt erfolgen.
+	\item Für den Mailverkehr zu Partnerfirmen genügt eine Transportverschlüsselung.
+	\item Mailverkehr zu einer Einzeladresse (z.B. Privatadresse eines Mitarbeiters) darf nur über eine Ende-zu-Ende
+		Verschlüsselung erfolgen.
+	\item Die Ver- und Entschlüsselung für das \emph{public key}-Verfahren erfolgt dabei zentral auf dem Firmen-Mail-Server,
+		damit der einzelne Mitarbeiter nicht mit der Schlüsselverwaltung zu tun hat.
+	\end{itemize}
+mMail ist \emph{open source} und kann über unsere Firma kostenlos bezogen werden. WagnerTech unterstützt Sie gerne bei
+Einrichtung und Betrieb der Software.
+
+\end{multicols}
+
+\end{document}

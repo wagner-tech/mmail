@@ -1,0 +1,14 @@
+# for more info see mmail(8)
+
+#ML_+1# uncomment for mlist feature
+#/mlist@mmail/ FILTER mmail_list:[127.0.0.1]:31335
+
+#EEI_+1# uncomment for e2e-in feature
+#/@localhost/ FILTER decrypt:[127.0.0.1]:31337
+#/@your.damin/ FILTER decrypt:[127.0.0.1]:31337
+
+#EEO_+4# uncomment for e2e-out feature
+#/@gmx/ FILTER gpg-mailgate
+#/@t-online/ FILTER gpg-mailgate
+#/@google/ FILTER gpg-mailgate
+#/@msn/ FILTER gpg-mailgate

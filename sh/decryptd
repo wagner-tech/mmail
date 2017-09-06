@@ -1,0 +1,141 @@
+#!/bin/bash
+set -e # end if anything fails
+
+test -x /usr/local/bin/decryptd.pl || (echo "/usr/local/bin/decryptd.pl not executable" ; exit 1 )
+
+syslog=/dev/null
+syserr=/tmp/decrypterd.err
+
+RETVAL=0
+
+. /lib/lsb/init-functions
+
+usage() {
+	echo "$0 [options] start|restart|stop"
+	echo "  -l <syslog>     DEFAULT: /dev/null"
+	echo "  -e <errlog>     DEFAULT: /tmp/xeventhandler.err"
+}
+
+stop_process() {
+	# $1: process name
+	# $2: process description
+	
+	status=0
+	pid=$(pidofproc $1) || status=$?
+	if [ $status == 0 ]; then
+		log_daemon_msg "Stopping $2" $1
+		kill -9 $pid
+		sleep 2
+		status_of_proc "$1" "$2" || status=$?
+		if [ $status == "0" ]
+		then
+			log_end_msg 1
+			return 1
+		fi
+	fi
+	return 0
+}	
+
+start () {
+
+	# check, if process is already running
+	status=0
+	status_of_proc "decryptd.pl" "mMail decryptd" || status=$?
+	if [ $status == "0" ] 
+	then
+		log_end_msg 1
+		exit 1
+	fi
+	
+	log_daemon_msg "decryptd.pl" "mMail decryptd" || true
+	(decryptd.pl &) 1>>$syslog 2>>$syserr
+	sleep 2
+	status_of_proc "decryptd.pl" "mMail decryptd"
+	if [ $? == "0" ] 
+	then
+		log_end_msg 0 || true
+	else
+	    log_end_msg 1 || true
+	fi
+}
+
+status() {
+	if [ `ps -ef | grep $PROG | grep -v grep | grep -v bash | wc -l` -gt 0 ]
+	then
+		echo -n $PROG" is running..."
+		echo ""
+	else
+		echo -n $PROG" is stopped"
+		echo ""
+	fi
+}
+
+stop () {
+	stop_process "decryptd.pl" "mMail decryptd"
+	log_end_msg 0
+}
+
+# evaluate parameters
+
+operation="NOP"
+
+while [ -n "$1" ]
+do
+	case "$1" in
+	start)
+		operation=start
+		shift
+		;;
+	restart)
+		operation=restart
+		shift
+		;;
+	stop)
+		operation=stop
+		shift
+		;;
+	-c)
+		configfile=$2
+		shift 2
+		;;
+	-l)
+		syslog=$2
+		if [ -f $syslog ]; then rm $syslog; fi
+		shift 2
+		;;
+	-e)
+		syserr=$2
+		shift 2
+		;;
+	-h)
+		usage
+		exit 0
+		;;
+	*)
+		usage
+		exit 1
+		;;
+	esac
+done
+
+if [ -f $syserr ]; then rm $syserr; fi
+
+case $operation in
+start)
+	start
+	;;
+stop)
+	stop
+	;;
+restart)
+	stop
+	start
+	;;
+*)
+	usage
+	exit 1
+	;;
+esac
+
+exit 0
+
