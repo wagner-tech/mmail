@@ -38,6 +38,8 @@ then
 	adduser --quiet --disabled-login --gecos mmail mmail
 fi
 
+chown -R mmail:mmail /home/mmail
+
 # stop postfix
 #systemctl start postfix
 /etc/init.d/postfix start || true

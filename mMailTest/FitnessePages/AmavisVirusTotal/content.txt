@@ -11,7 +11,7 @@ Alle Features ausschalten:
 
 Testen, ob amavis-vt ausgeschaltet ist.
 !|test.util.CallScript|
-|call script|sudo echo "" >/var/mail/${USER}|
+|call script|echo "" >/var/mail/${USER}|
 |call script|smtp.pl ${USER}@localhost < etc/MailVirus.txt|
 |call script|grep Testvirus /var/mail/${USER}|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
