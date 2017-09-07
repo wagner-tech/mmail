@@ -13,14 +13,12 @@ Testen, ob e2e-in ausgeschaltet ist.
 !|test.util.CallScript|
 |call script|sudo echo "" >/var/mail/mmail|
 |call script|!-cat etc/encrypt.txt| smtp.pl mmail@localhost-!|
-|call script|grep -v Nachricht /var/mail/mmail|
+|call script|! grep Nachricht /var/mail/mmail|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
 e2e-in einschalten
-|call script|sudo /etc/init.d/postfix stop|
 |call script|sudo mmail enable e2e-in|
-|call script|sudo /etc/init.d/postfix start|
 
 Testen, ob e2e-in eingeschaltet ist.
 |call script|sudo echo "" >/var/mail/mmail|
@@ -28,9 +26,7 @@ Testen, ob e2e-in eingeschaltet ist.
 |call script|grep Nachricht /var/mail/mmail|
 
 e2e-in wieder ausschalten
-|call script|sudo /etc/init.d/postfix stop|
 |call script|sudo mmail disable e2e-in|
-|call script|sudo /etc/init.d/postfix start|
 
 Testen, ob e2e-in ausgeschaltet ist.
 !|test.util.CallScript|
