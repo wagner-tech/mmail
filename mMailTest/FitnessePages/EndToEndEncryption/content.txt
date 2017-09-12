@@ -1,29 +1,17 @@
 !1 e2e-Test
 
-Alle Features ausschalten:
-!|test.util.CallScript|
-|call script|sudo /etc/init.d/postfix stop|
-|call script|sudo cp /etc/postfix/mmail/master.cf /etc/postfix/master.cf|
-|call script|sudo bash -c 'sed "s/%HOSTNAME%/$(hostname)/" /etc/postfix/mmail/main.cf > /etc/postfix/main.cf'|
-|call script|sudo /etc/init.d/postfix start|
-
 !2 e2e-in
 
-Testen, ob e2e-in ausgeschaltet ist.
-!|test.util.CallScript|
-|call script|echo "" >/var/mail/${USER}|
-|call script|smtp.pl mmail@localhost < etc/encrypt.txt|
-|call script|! grep Nachricht /var/mail/${USER}|
-Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
-postfix nicht ordentlich gestartet.
-
 e2e-in einschalten
+!|test.util.CallScript|
 |call script|sudo mmail enable e2e-in|
 
 Testen, ob e2e-in eingeschaltet ist.
 |call script|sudo echo "" >/var/mail/mmail|
 |call script|!-cat etc/encrypt.txt| smtp.pl mmail@localhost-!|
 |call script|grep Nachricht /var/mail/mmail|
+Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
+postfix nicht ordentlich gestartet.
 
 e2e-in wieder ausschalten
 |call script|sudo mmail disable e2e-in|

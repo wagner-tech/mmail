@@ -47,6 +47,7 @@ e2e-in)
 		/etc/init.d/decryptd stop
 		update-rc.d -f decryptd remove
 		;;
+	esac
 	;;
 tls-out)
 	commenter.pl $maincf TO $1

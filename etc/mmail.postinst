@@ -22,15 +22,12 @@ pushd /etc/postfix/tls_smtp 1>/dev/null
 		cp ../dynamicmaps.cf .
 	fi
 popd 1>/dev/null
-#pushd /etc/postfix 1>/dev/null
-#	if ! test -e master.cf.orig
-#	then
-#		mv main.cf main.cf.orig
-#		mv master.cf master.cf.orig
-#		sed "s/%HOSTNAME%/$(hostname)/" mmail/main.cf > main.cf
-#		cp mmail/master.cf .
-#	fi
-#popd 1>/dev/null
+
+# check, if mmail.contfilt.regexp is in main.cf
+if ! grep "mmail.contfilt.regexp" /etc/postfix/main.cf >/dev/null
+then
+	postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mmail.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
+fi
 
 # check existence of mmail user
 if ! grep mmail /etc/passwd >/dev/null
