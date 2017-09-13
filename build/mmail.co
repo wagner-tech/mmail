@@ -8,7 +8,7 @@ fi
 
 if [ "$1" == "TOP" ]
 then
-	mkdir mmail
+	mkdir -p mmail
 	pushd mmail 2>/dev/null
 	ln -sf ../../../etc .
 	ln -sf ../../../perl .

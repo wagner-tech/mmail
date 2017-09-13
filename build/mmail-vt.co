@@ -1,20 +1,3 @@
 #!/bin/bash
-set -e
 
-if [ ! -d gpg-mailgate ]
-then
-	git clone https://github.com/ajgon/gpg-mailgate.py gpg-mailgate
-fi
-
-if [ "$1" == "TOP" ]
-then
-	mkdir mmail
-	pushd mmail 2>/dev/null
-	ln -sf ../../../etc .
-	ln -sf ../../../perl .
-	ln -sf ../../../sh .
-else
-	git clone $(HOME)/mmail
-	checkout $1
-fi
-
+../mmail.co $*

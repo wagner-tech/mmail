@@ -31,10 +31,6 @@ mkdir -p $base/usr/share/perl5
 cp src/mmail/perl/*.pl $base/usr/local/bin/
 cp src/mmail/perl/mGPG.pm $base/usr/share/perl5
 
-# copy filter files to mmail home
-mkdir -p $base/home/mmail/etc
-cp src/mmail/etc/mmail.etc/* $base/home/mmail/etc
-
 # copy admin scripts
 mkdir -p $base/usr/sbin
 cp src/mmail/sh/mmail $base/usr/sbin
