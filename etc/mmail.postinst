@@ -6,22 +6,11 @@ set -e
 /etc/init.d/postfix stop
 
 # create further postfix instances
-pushd /etc/postfix/free_pass 1>/dev/null
-	if ! test -e master.cf
-	then
-		cp ../mmail/free_pass/master.cf .
-		cp ../mmail/free_pass/main.cf .
-		cp ../dynamicmaps.cf .
-	fi
-popd 1>/dev/null
-pushd /etc/postfix/tls_smtp 1>/dev/null
-	if ! test -e master.cf
-	then
-		cp ../mmail/tls_smtp/master.cf .
-		cp ../mmail/tls_smtp/main.cf .
-		cp ../dynamicmaps.cf .
-	fi
-popd 1>/dev/null
+postmulti -e init
+if ! test -d /etc/postfix/free_pass
+then
+	postmulti -e create -I postfix-free_pass config_directory=/etc/postfix/free_pass
+fi
 
 # check, if mmail.contfilt.regexp is in main.cf
 if ! grep "mmail.contfilt.regexp" /etc/postfix/main.cf >/dev/null

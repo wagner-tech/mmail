@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 usage() {
 	echo "usage: mmail enable|disable FEATURE"
@@ -51,6 +52,21 @@ e2e-in)
 	;;
 tls-out)
 	commenter.pl $maincf TO $1
+	case "$1" in
+	enable)
+		if test "$(postmulti -l -i postfix-smtp-tls |wc -l) -eq 1"
+		then
+			postmulti -e enable -i postfix-smtp-tls
+		else
+			postmulti -e create -I postfix-smtp-tls config_directory=/etc/postfix/smtp-tls
+		fi
+		;;
+	disable)
+		postmulti -e disable -i postfix-smtp-tls
+		postmulti -e deport -i postfix-smtp-tls
+		;;
+	esac
+
 	;;
 *)
 	echo "error: invalid FEATURE"
