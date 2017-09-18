@@ -1,0 +1,12 @@
+# amavis_vt configuration
+# here the dafault values:
+# TODO
+
+#my $db_file = "/var/lib/mmail/amavis-vt.db";
+#my $api_key = "";
+#$min_file_size = 100;
+#my @scan_only_files = ("jpeg", "exe");
+#my $dont_scan_files = 1;
+#my $rescan_after_hours = 10;
+
+1;

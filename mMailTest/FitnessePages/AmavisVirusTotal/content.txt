@@ -1,12 +1,5 @@
 !1 Amavis-Virus-Total-Test 
 
-Alle Features ausschalten:
-!|test.util.CallScript|
-|call script|sudo /etc/init.d/postfix stop|
-|call script|sudo cp /etc/postfix/mmail/master.cf /etc/postfix/master.cf|
-|call script|sudo bash -c 'sed "s/%HOSTNAME%/$(hostname)/" /etc/postfix/mmail/main.cf > /etc/postfix/main.cf'|
-|call script|sudo /etc/init.d/postfix start|
-
 !2 amavis-vt
 
 Testen, ob amavis-vt ausgeschaltet ist.
