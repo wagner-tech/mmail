@@ -3,7 +3,7 @@ Version: %BUILD%
 Section: base
 Priority: optional
 Architecture: all
-Depends: postfix amavisd-new
+Depends: postfix amavisd-new libdbi-perl
 Maintainer: WagnerTech UG <mail@wagnertech.de>
 Description: virus total extension for postfix / amavisd-new
 

@@ -1,0 +1,49 @@
+use strict;
+
+# @av_scanners is a list of n-tuples, where fields semantics is:
+#  1. av scanner plain name, to be used in log and reports;
+#  2. scanner program name; this string will be submitted to subroutine
+#     find_external_programs(), which will try to find the full program path
+#     name during startup; if program is not found, this scanner is disabled.
+#     Besides a simple string (full program path name or just the basename
+#     to be looked for in PATH), this may be an array ref of alternative
+#     program names or full paths - the first match in the list will be used;
+#     As a special case for more complex scanners, this field may be
+#     a subroutine reference, and the whole n-tuple is passed to it as args.
+#  3. command arguments to be given to the scanner program;
+#     a substring {} will be replaced by the directory name to be scanned, i.e.
+#     "$tempdir/parts", a "*" will be replaced by base file names of parts;
+#  4. an array ref of av scanner exit status values, or a regexp (to be
+#     matched against scanner output), indicating NO VIRUSES found;
+#  5. an array ref of av scanner exit status values, or a regexp (to be
+#     matched against scanner output), indicating VIRUSES WERE FOUND;
+#     Note: the virus match prevails over a 'not found' match, so it is safe
+#     even if the no. 4. matches for viruses too;
+#  6. a regexp (to be matched against scanner output), returning a list
+#     of virus names found, or a sub ref, returning such a list when given
+#     scanner output as argument;
+#  7. and 8.: (optional) subroutines to be executed before and after scanner
+#     (e.g. to set environment or current directory);
+#     see examples for these at KasperskyLab AVP and NAI uvscan.
+
+@av_scanners = (
+ ['mmail-vt',
+   sub { use amavis_vt; Amavis::AV::ask_av(\&amavis_vt::check_file, @_) },
+   ["{}/*"], 
+   [0], 
+   [1], 
+   qr/^(Virus:.*)$/m ],
+);
+
+
+# If no virus scanners from the @av_scanners list produce 'clean' nor
+# 'infected' status (i.e. they all fail to run or the list is empty),
+# then _all_ scanners from the @av_scanners_backup list are tried
+# (again, subject to $first_infected_stops_scan). When there are both
+# daemonized and equivalent or similar command-line scanners available,
+# it is customary to place slower command-line scanners in the
+# @av_scanners_backup list. The default choice is somewhat arbitrary,
+# move entries from one list to another as desired, keeping main scanners
+# in the primary list to avoid warnings.
+
+@av_scanners_backup = ();

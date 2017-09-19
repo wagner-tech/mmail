@@ -8,7 +8,13 @@ mkdir -p $base/usr/share/perl5/
 cp src/mmail/perl/amavis_vt.pm $base/usr/share/perl5/
 
 # copy configutarion
+mkdir -p $base/etc/
 cp src/mmail/perl/amavis_vt.cf $base/etc/
+
+# copy amavis configuration
+mkdir -p $base/etc/amavis/conf.d/
+cp src/mmail/etc/55-mmail_filter_mode $base/etc/amavis/conf.d/
+cp src/mmail/etc/56-mmail_scanners $base/etc/amavis/conf.d/
 
 # copy man page
 mkdir -p $base/usr/share/man/man8
