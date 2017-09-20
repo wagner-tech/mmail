@@ -2,7 +2,7 @@
 # here the dafault values:
 # TODO
 
-#my $db_file = "/var/lib/mmail/amavis-vt.db";
+$db_file = "/home/mint18/tmp/amavis-vt.db";
 #my $api_key = "";
 $min_file_size = 10;
 #@scan_only_files = ();

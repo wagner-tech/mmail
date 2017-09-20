@@ -6,7 +6,10 @@ use warnings;
 use DBI;
 use Digest::SHA;
 use File::MimeInfo;
+use LWP::UserAgent;
 use Sys::Syslog qw(:standard :macros);
+
+use VTScan;
 
 # define module constants
 our $default_config_file = "/etc/amavis_vt.cf";
@@ -24,6 +27,28 @@ sub import {
     $config_file = $file;
 }
 
+sub open_database {
+	my ($db_file) = @_;
+	
+	# check if db exists
+	my $new_db = 1;
+	$new_db = 0 if (-e $db_file);
+	
+	# open database
+	my $driver   = "SQLite"; 
+	my $dsn = "DBI:$driver:$db_file";
+	my $userid = "";
+	my $password = "";
+	my $dbh = DBI->connect($dsn, $userid, $password, { RaiseError => 1 }) 
+	   or die $DBI::errstr;
+	
+	if ($new_db) {
+		# create table
+		VTScan::create_table($dbh);
+	}
+	return $dbh;
+}
+
 
 # exit status: 0:clean; 1:exploit; 2:corrupted
 sub check_file($;@) {
@@ -31,10 +56,12 @@ sub check_file($;@) {
 	our $db_file = "/var/lib/mmail/amavis-vt.db";
 	our $api_key = "";
 	our $min_file_size = 100;
+	our $threshold = 5;
 	our @scan_only_files = ();
 	our @dont_scan_files = ();
 	our $rescan_after_hours = 10;
-	
+	our $url='https://www.virustotal.com/vtapi/v2/file/report';
+
 	# include configuration
 	require "$config_file";
 	
@@ -61,73 +88,64 @@ sub check_file($;@) {
 	close $fh;
 
 	# check sha1 key in db
-	my $must_update = 0;
+	my $vt_scan;
+	my $curr_time = time();
+	my $dbh;
 	if (defined($db_file)) {
 		
 		# open database
-		my $driver   = "SQLite"; 
-		my $dsn = "DBI:$driver:dbname = $db_file";
-		my $userid = "";
-		my $password = "";
-		my $dbh = DBI->connect($dsn, $userid, $password, { RaiseError => 1 }) 
-		   or die $DBI::errstr;
-		  
+		$dbh = open_database($db_file);
+		
 		# fetch record
-		my $stmt = qq(SELECT * FROM vt_scan WHERE hash=$sha1_key);
+		my $stmt = qq(SELECT * FROM vt_scan WHERE hash='$sha1_key');
 		my $sth = $dbh->prepare( $stmt );
 		my $rv = $sth->execute() or die $DBI::errstr;
+		my @record = $sth->fetchrow_array();
 		
-		# check return code
-		if(($rv < 0) && ($DBI::errstr =~ /table doesn''t exist/)) {
-			
-			# create table
-			my $stmt = qq(CREATE TABLE vt_scan(hash VARCHAR(255) PRIMARY INDEX, filename TEXT,
-				tstamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, hits INTEGER, result TEXT,
-				details TEXT););
-			my $sth = $dbh->prepare( $stmt );
-			my $rv = $sth->execute() or die $DBI::errstr;
-		}
-		elsif ($rv < 0) {
-			die "could not fetch record: $DBI::errstr";
-		}
-		else {
+		if ($#record > -1) {
 			
 			# record found
-			
+			$vt_scan = new VTScan(@record);
+			if ($vt_scan->tstamp > $curr_time - $rescan_after_hours*3600) {
+				return ($vt_scan->result, $vt_scan->details);
+			}
 		}
-}
-
-while(my @row = $sth->fetchrow_array()) {
-      print "ID = ". $row[0] . "\n";
-      print "NAME = ". $row[1] ."\n";
-      print "ADDRESS = ". $row[2] ."\n";
-      print "SALARY =  ". $row[3] ."\n\n";
-}
 	}
-	
-=cut
-IF $db_file THEN
-  $must_update = false
-  öffne SQLite $db_file (erzeugt Datei falls nicht vorhanden)
-  Ermittle record für ermittelten Hash:
-   SELECT * FROM vt_scan WHERE hash=<SHA1>
-  IF error_code == <table doesn''t exist> THEN
-   Erzeuge Tabelle:
-    CREATE TABLE vt_scan(hash VARCHAR(255) PRIMARY INDEX, filename TEXT,
-tstamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, hits INTEGER, result TEXT,
-details TEXT);
-  ELSEIF record found THEN
-    IF record.tstamp > CURRENT_TIMESTAMP - $rescan_after_hours*3600 THEN
-     RETURN record.result
-    ENDIF
-    $must_update = true
-  ENDIF  
-ENDIF
 
+	# check file with virus total
+	my @result = @ret_ok;
+	my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 1 });
+	my $response = $ua->post($url, ['apikey' => $api_key, 'resource' => $sha1_key]);
+	die ("VT call failes") unless ($response->is_success);
+	my $details = $response->content;
+	my $json = JSON->new->allow_nonref;  
+	my $decjson = $json->decode($details);
+	my $hits = $decjson->{"positives"};
 
+	# build result
+	if ($hits > $threshold) {
+	  	
+	  	# virus
+	  	@result = (1, $details);
+	}
 
-=cut
-	return (5, "Ende");
+	if (defined($db_file)) {
+		
+		# update / insert result record
+		if (defined($vt_scan)) {
+			
+			# update record
+			$vt_scan->timestamp = $curr_time;
+			$vt_scan->update($dbh);
+		}
+		else {
+			# insert record
+			$vt_scan = new VTScan(($sha1_key,$fn,$curr_time,$hits,@result));
+			$vt_scan->insert($dbh);
+		}
+		
+	}
+	@result;
 }
 
 1;
