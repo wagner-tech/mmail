@@ -6,6 +6,7 @@ use warnings;
 use DBI;
 use Digest::SHA;
 use File::MimeInfo;
+use JSON;
 use LWP::UserAgent;
 use Sys::Syslog qw(:standard :macros);
 
@@ -14,8 +15,6 @@ use VTScan;
 # define module constants
 our $default_config_file = "/etc/amavis_vt.cf";
 our @ret_ok = (0, "Clean");
-our $ret_virus = 1;
-our $ret_error = 2;
 
 # define config file var
 our $config_file;
@@ -106,8 +105,8 @@ sub check_file($;@) {
 			
 			# record found
 			$vt_scan = new VTScan(@record);
-			if ($vt_scan->tstamp > $curr_time - $rescan_after_hours*3600) {
-				return ($vt_scan->result, $vt_scan->details);
+			if ($vt_scan->{tstamp} > $curr_time - $rescan_after_hours*3600) {
+				return ($vt_scan->{rcode}, $vt_scan->{details});
 			}
 		}
 	}
@@ -120,13 +119,15 @@ sub check_file($;@) {
 	my $details = $response->content;
 	my $json = JSON->new->allow_nonref;  
 	my $decjson = $json->decode($details);
-	my $hits = $decjson->{"positives"};
+	my $hits = $decjson->{positives};
 
 	# build result
-	if ($hits > $threshold) {
+	if ($decjson->{"response_code"} > 0 && $hits > $threshold) {
 	  	
-	  	# virus
-	  	@result = (1, $details);
+	  	# virus: extract text result of first hit
+	  	my $scans = $decjson->{scans};
+	  	my $rtext = $decjson->{scans}->{(keys(%$scans))[0]}->{result};
+	  	@result = (1, $rtext);
 	}
 
 	if (defined($db_file)) {
@@ -135,7 +136,11 @@ sub check_file($;@) {
 		if (defined($vt_scan)) {
 			
 			# update record
-			$vt_scan->timestamp = $curr_time;
+			$vt_scan->{filename} = $fn;
+			$vt_scan->{tstamp} = $curr_time;
+			$vt_scan->{hits} = $hits;
+			$vt_scan->{rcode} = $result[0];
+			$vt_scan->{details} = $result[1];
 			$vt_scan->update($dbh);
 		}
 		else {

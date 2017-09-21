@@ -1,7 +1,7 @@
 package VTScan;
 
 sub new {
-	my ($db_record) = @_;
+	my ($class, @db_record) = @_;
 	my %inst = (
 		hash => $db_record[0],
 		filename => $db_record[1],
@@ -24,15 +24,15 @@ sub create_table {
 
 sub insert {
 	my ($self, $dbh) = @_;
-	my $stmt = qq(INSERT INTO vt_scan VALUES('$self->hash','$self->filename',
-		$self->tstamp, $self->hits, $self->rcode, '$self->details'));
+	my $stmt = "INSERT INTO vt_scan VALUES('".$self->{hash}."','".$self->{filename}.
+		"',".$self->{tstamp}.",".$self->{hits}.",".$self->{rcode}.",'".$self->{details}."')";
 	my $rv = $dbh->do($stmt) or die $DBI::errstr;
 }
 
 sub update {
 	my ($self, $dbh) = @_;
-	my $stmt = qq(UPDATE vt_scan SET filename='$self->filename',tstamp=$self->tstamp,
-		hits=$self->hits,rcode=$self->rcode,details='$self->details' WHERE hash='$self->hash");
+	my $stmt = "UPDATE vt_scan SET filename='".$self->{filename}."',tstamp=".$self->{tstamp}.
+		",hits=".$self->{hits}.",rcode=".$self->{rcode}.",details='".$self->{details}."' WHERE hash='".$self->{hash}."'";
 	my $rv = $dbh->do($stmt) or die $DBI::errstr;
 }
 
