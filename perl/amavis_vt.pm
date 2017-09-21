@@ -51,8 +51,9 @@ sub open_database {
 
 # exit status: 0:clean; 1:exploit; 2:corrupted
 sub check_file($;@) {
+
 	# define default values
-	our $db_file = "/var/lib/mmail/amavis-vt.db";
+	our $db_file = "/var/lib/amavis/amavis-vt.db";
 	our $api_key = "";
 	our $min_file_size = 100;
 	our $threshold = 5;
@@ -119,7 +120,7 @@ sub check_file($;@) {
 	my $details = $response->content;
 	my $json = JSON->new->allow_nonref;  
 	my $decjson = $json->decode($details);
-	my $hits = $decjson->{positives};
+	my $hits = ($decjson->{positives}) ? $decjson->{positives} : 0;
 
 	# build result
 	if ($decjson->{"response_code"} > 0 && $hits > $threshold) {

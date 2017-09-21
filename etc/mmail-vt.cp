@@ -6,6 +6,7 @@ base=$1
 # copy perl modul
 mkdir -p $base/usr/share/perl5/
 cp src/mmail/perl/amavis_vt.pm $base/usr/share/perl5/
+cp src/mmail/perl/VTScan.pm $base/usr/share/perl5/
 
 # copy configutarion
 mkdir -p $base/etc/

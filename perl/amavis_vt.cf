@@ -1,7 +1,7 @@
 # amavis_vt configuration
 # here the dafault values:
 
-#$db_file = "/var/lib/mmail/amavis-vt.db";
+#$db_file = "/var/lib/amavis/amavis-vt.db";
 #$api_key = "";
 #$min_file_size = 100;
 #$threshold = 5;
