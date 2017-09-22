@@ -19,6 +19,16 @@ our @ret_ok = (0, "Clean");
 # define config file var
 our $config_file;
 
+# define configuration default values
+our $db_file = "/var/lib/amavis/amavis-vt.db";
+our $api_key = "";
+our $min_file_size = 100;
+our $threshold = 5;
+our @scan_only_files = ();
+our @dont_scan_files = ();
+our $rescan_after_hours = 10;
+our $url='https://www.virustotal.com/vtapi/v2/file/report';
+
 # set config file with module parameter
 sub import {
     my ($package, $file) = @_;
@@ -52,20 +62,11 @@ sub open_database {
 # exit status: 0:clean; 1:exploit; 2:corrupted
 sub check_file($;@) {
 
-	# define default values
-	our $db_file = "/var/lib/amavis/amavis-vt.db";
-	our $api_key = "";
-	our $min_file_size = 100;
-	our $threshold = 5;
-	our @scan_only_files = ();
-	our @dont_scan_files = ();
-	our $rescan_after_hours = 10;
-	our $url='https://www.virustotal.com/vtapi/v2/file/report';
-
 	# include configuration
 	require "$config_file";
 	
 	my($fn) = @_;  # file name to be checked
+	syslog(LOG_INFO, "amavis_vt: called for $fn.");
 	
 	# check MIME type and file size
 	my $mime_type = mimetype($fn);
@@ -107,6 +108,7 @@ sub check_file($;@) {
 			# record found
 			$vt_scan = new VTScan(@record);
 			if ($vt_scan->{tstamp} > $curr_time - $rescan_after_hours*3600) {
+				syslog(LOG_INFO, "amavis_vt: returning result from database.");
 				return ($vt_scan->{rcode}, $vt_scan->{details});
 			}
 		}
@@ -121,7 +123,8 @@ sub check_file($;@) {
 	my $json = JSON->new->allow_nonref;  
 	my $decjson = $json->decode($details);
 	my $hits = ($decjson->{positives}) ? $decjson->{positives} : 0;
-
+	syslog(LOG_INFO, "amavis_vt: returning result from virus-total.");
+	
 	# build result
 	if ($decjson->{"response_code"} > 0 && $hits > $threshold) {
 	  	

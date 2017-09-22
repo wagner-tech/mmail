@@ -7,7 +7,7 @@
 #$threshold = 5;
 #@scan_only_files = ();
 #@dont_scan_files = ();
-#$rescan_after_hours = 10;
+#$rescan_after_hours = 0;
 #$url='https://www.virustotal.com/vtapi/v2/file/report';
 
 #$db_file = "/home/mint18/tmp/amavis-vt.db";

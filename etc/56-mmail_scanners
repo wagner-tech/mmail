@@ -32,7 +32,7 @@ use strict;
    ["{}/*"], 
    [0], 
    [1], 
-   qr/^(Virus:.*)$/m ],
+   qr/^(Virus:.*)$/m ], @av_scanners
 );
 
 
@@ -46,4 +46,4 @@ use strict;
 # move entries from one list to another as desired, keeping main scanners
 # in the primary list to avoid warnings.
 
-@av_scanners_backup = ();
+# @av_scanners_backup = ();
