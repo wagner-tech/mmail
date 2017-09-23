@@ -5,21 +5,22 @@
 amavis-vt einschalten
 !|test.util.CallScript|
 |call script|sudo mmail enable amavis-vt|
+|call script|sleep 2|
 
 amavis-vt testen:
 
 Normale Mail kommt durch:
 |call script|echo "" >/var/mail/${USER}|
 |call script|smtp.pl ${USER}@localhost < etc/MailAnhang.txt|
-|call script|sleep 3|
+|call script|sleep 10|
 |call script|grep "neue Liste" /var/mail/${USER}|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
 Testvirus bleibt hängen
 |call script|smtp.pl ${USER}@localhost < etc/MailVirus.txt|
-|call script|sleep 2|
-|call script|! grep Testvirus /var/mail/${USER}|
+|call script|sleep 10|
+|call script|! grep "Virus.txt" /var/mail/${USER}|
 
 amavis-vt ausschalten
 |call script|sudo mmail disable amavis-vt|
@@ -29,10 +30,10 @@ amavis-vt testen:
 Normale Mail kommt durch:
 |call script|echo "" >/var/mail/${USER}|
 |call script|smtp.pl ${USER}@localhost < etc/MailAnhang.txt|
-|call script|sleep 2|
+|call script|sleep 5|
 |call script|grep "neue Liste" /var/mail/${USER}|
 
 Testvirus kommt auch durch
 |call script|smtp.pl ${USER}@localhost < etc/MailVirus.txt|
-|call script|sleep 2|
-|call script|grep Testvirus /var/mail/${USER}|
+|call script|sleep 5|
+|call script|grep "Virus.txt" /var/mail/${USER}|
