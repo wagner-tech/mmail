@@ -1,0 +1,54 @@
+#!/bin/bash
+set -e
+
+# check if postfix is configured for amavisd-new
+config_nec=1
+
+# heuristic 1): backup is present
+POSTFIX_BCKFILE="/var/backups/amavisd-new-postfix/main.cf-backup"
+POSTFIX_MASTER_BCKFILE="/var/backups/amavisd-new-postfix/master.cf-backup"
+if [ -f $POSTFIX_BCKFILE -o -f $POSTFIX_MASTER_BCKFILE ]; then
+	echo "postfix already configured for amavisd-new: backup files existing"
+	config_nec=0
+	
+# heuristic 2): amavisd port is present in 
+elif grep 10024 /etc/postfix/main.cf 1>/dev/null && grep 10025 /etc/postfix/master.cf 1>/dev/null; then
+	echo "postfix already configured for amavisd-new: ports 10024/10025 existing in configuration"
+	config_nec=0
+fi
+
+if [ $config_nec -eq 0 ]; then
+	exit 0
+fi
+
+# set amavisd-new options in postfix
+set_postfix_option() {
+       opt="$1"
+       # Backup the existion value of the option
+       postconf $(echo ${opt} | cut -d= -f1) >> ${POSTFIX_BCKFILE} || true
+       # Set the new value of the option
+               postconf -e "${opt}"
+}
+
+if which postconf >/dev/null; then
+	# Setup postfix
+	set_postfix_option "content_filter = smtp-amavis:[localhost]:10024"
+	set_postfix_option "policy-spf_time_limit = 3600s"
+	SMTPD_RECIP_RESTR=`postconf smtpd_recipient_restrictions`
+	set_postfix_option "$SMTPD_RECIP_RESTR, check_policy_service unix:private/policy-spf"
+else
+	echo "postfix could not be configured by postconf"
+	exit 1
+fi
+
+cp /etc/postfix/master.cf  $POSTFIX_MASTER_BCKFILE
+postfix-add-policy policy-spf nobody /usr/bin/policyd-spf
+postfix-add-filter smtp-amavis 10025
+if which systemctl >/dev/null; then
+	systemctl restart postfix
+	systemctl restart amavisd-new
+else
+	/etc/init.d/postfix restart
+	/etc/init.d/amavisd-new restart
+fi
+
