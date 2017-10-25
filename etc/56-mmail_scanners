@@ -26,13 +26,13 @@ use strict;
 #     (e.g. to set environment or current directory);
 #     see examples for these at KasperskyLab AVP and NAI uvscan.
 
-@av_scanners = (
+@av_scanners = (@av_scanners,
  ['mmail-vt',
    sub { use amavis_vt; Amavis::AV::ask_av(\&amavis_vt::check_file, @_) },
    ["{}/*"], 
    [0], 
    [1], 
-   qr/^(Virus:.*)$/m ], @av_scanners
+   qr/^(Virus:.*)$/m ]
 );
 
 

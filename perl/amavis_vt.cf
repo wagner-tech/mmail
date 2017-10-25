@@ -1,5 +1,5 @@
 # amavis_vt configuration
-# here the dafault values:
+# here the default values:
 
 #$db_file = "/var/lib/amavis/amavis-vt.db";
 #$api_key = "";
@@ -10,7 +10,7 @@
 #$rescan_after_hours = 0;
 #$url='https://www.virustotal.com/vtapi/v2/file/report';
 
-#$db_file = "/home/mint18/tmp/amavis-vt.db";
+$db_file = "/home/mint18/tmp/amavis-vt.db";
 $api_key = "3e7ab8bce2c1d25ae5853d2e796c465944305f7afc62491b952dd2e5d8202964";
 $min_file_size = 10;
 

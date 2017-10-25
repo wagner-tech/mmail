@@ -3,7 +3,7 @@ Version: %BUILD%
 Section: base
 Priority: optional
 Architecture: all
-Depends: postfix,amavisd-new,libdbi-perl,libdbd-sqlite3-perl,libjson-perl,libfile-mimeinfo-perl
+Depends: amavisd-new,libdbi-perl,libdbd-sqlite3-perl,libjson-perl,libfile-mimeinfo-perl
 Maintainer: WagnerTech UG <mail@wagnertech.de>
 Description: virus total extension for postfix / amavisd-new
 

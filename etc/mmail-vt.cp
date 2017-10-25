@@ -21,9 +21,6 @@ cp src/mmail/etc/56-mmail_scanners $base/etc/amavis/conf.d/
 mkdir -p $base/usr/share/man/man8
 gzip -c src/mmail/etc/mmail-vt.8 >$base/usr/share/man/man8/mmail-vt.8.gz
 
-# create db dir
-mkdir -p $base/var/lib/mmail/
-
 # create dir for postfix config backup files
 mkdir -p $base/var/backups/amavisd-new-postfix
 
