@@ -29,6 +29,7 @@ our @scan_only_files = ();
 our @dont_scan_files = ('^text\/', '^image\/');
 our $rescan_after_hours = 10;
 our $url='https://www.virustotal.com/vtapi/v2/file/report';
+our $max_virus_names = 3;
 
 sub my_log {
     my $msg = shift;
@@ -141,12 +142,17 @@ sub check_file($;@) {
 
 		# virus: traverse scans and collect names of virus for scanners that detected a virus
 		my $scans = $decjson->{scans};
-
-
-#TODO
-
-
-		my $rtext = $decjson->{scans}->{(keys(%$scans))[0]}->{result};
+		my $ntext = 0;
+		my $rtext = "";
+		foreach (keys(%$scans)) {
+			my $t = $scans->{$_}->{result};
+			if (length($t) > 0) {
+				$rtext .= "|$_:" . $t;
+				$ntext++;
+				last if ($ntext == $max_virus_names);
+			}
+		}
+#		my $rtext = $decjson->{scans}->{(keys(%$scans))[0]}->{result};
 		if ($hits >= $threshold) {
 			@result = (1, $rtext);
 			my_log("found malware: hits=$hits >= $threshold $rtext");
