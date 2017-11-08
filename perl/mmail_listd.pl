@@ -15,12 +15,20 @@
 #############################################################################
 # load configuration
 #############################################################################
-do "mmail.conf.pl";
-# TODO: Das funktioniert nicht!
+
+my $config_file = "/etc/mmail.conf";
+
+# eval runtime parameter
+if ($#ARGV > -1) {
+	# alternative config file given
+	$config_file = $ARGV[0];
+}
+
+# define configuration default values
 my $LISTPORT=31335;					# Postfix sends mail in first step to that port
 my $DECRYPTPORT=31336;					# Postfix sends mail in first step to that port
 my $ENCRYPTPORT=31337;					# Postfix sends mail in first step to that port
-my $LOCALDOMAINS="taunusstein.net quake0.de";		# my domains 
+my $LOCALDOMAINS="local.domains";		# my domains 
 my $DOMAIN = "mmail";
 my $SMTPUPLINK="127.0.0.1:10025";			# gpgproxy sends mail to this SMTP server
 							# may be Amavis
@@ -34,7 +42,8 @@ my $passphrase=`cat ${HOMEDIR}/key.txt`;		# Passphrase of private GnuPG key
 my $MAXLEN=10240000;					# max size of msg.
 my $PATH = "/home/mmail/etc";
 
-
+# include configuration
+require "$config_file";
 
 #############################################################################
 # no more to config

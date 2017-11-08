@@ -1,0 +1,11 @@
+!1 mlist
+
+mlist einschalten
+
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+
+Mail an Liste schicken
+|call script|smtp.pl liste.mlist@localhost < etc/MailAnhang.txt|
+Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
+postfix nicht ordentlich gestartet.
