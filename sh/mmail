@@ -70,6 +70,17 @@ e2e-in)
 		;;
 	esac
 	;;
+mlist)
+	case "$1" in
+	enable)
+		echo "Installing mlist feature"
+		;;
+	disable)
+		echo "Deinstalling mlist feature"
+		;;
+	esac
+	echo "Installing mlist feature"
+	;;
 tls-out)
 	commenter.pl $maincf TO $1
 	case "$1" in
