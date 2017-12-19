@@ -1,9 +1,16 @@
 #!/bin/bash
 set -e
 
+# check system
+sctl=$(which systemctl)
+
 # stop postfix
-#systemctl stop postfix
-/etc/init.d/postfix stop
+if [ -n "$sctl" ]
+then
+	systemctl stop postfix
+else	
+	/etc/init.d/postfix stop
+fi
 
 # create further postfix instances
 postmulti -e init
@@ -12,21 +19,33 @@ then
 	postmulti -e create -I postfix-free_pass config_directory=/etc/postfix/free_pass
 fi
 
+# create content filter
+pushd /etc/postfix/mmail >/dev/null
+	if [ ! -f mlist.contfilt.regexp ]
+	then
+		sed "s/_HOST_/$(postconf -h myhostname)/" mlist.contfilt.regexp.proto > mlist.contfilt.regexp
+	fi
+popd >/dev/null
+
 # check, if mmail.contfilt.regexp is in main.cf
-if ! grep "mmail.contfilt.regexp" /etc/postfix/main.cf >/dev/null
-then
-	postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mmail.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
-fi
+#if ! grep "mmail.contfilt.regexp" /etc/postfix/main.cf >/dev/null
+#then
+#	postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mmail.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
+#fi
 
 # check existence of mmail user
-if ! grep mmail /etc/passwd >/dev/null
+#if ! grep mmail /etc/passwd >/dev/null
+#then
+#	adduser --quiet --disabled-login --gecos mmail mmail
+#fi
+
+#chown -R mmail:mmail /home/mmail
+
+# start postfix
+if [ -n "$sctl" ]
 then
-	adduser --quiet --disabled-login --gecos mmail mmail
+	systemctl start postfix || true
+else	
+	/etc/init.d/postfix start || true
 fi
-
-chown -R mmail:mmail /home/mmail
-
-# stop postfix
-#systemctl start postfix
-/etc/init.d/postfix start || true
 

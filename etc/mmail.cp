@@ -15,9 +15,8 @@ cp -a src/gpg-mailgate/GnuPG $base/usr/lib/python2.7/
 
 # copy postfix config
 mkdir -p $base/etc/postfix/
-cp -a src/mmail/etc/mmail $base/etc/postfix
-mv $base/etc/postfix/mmail/ma*.cf.proto $base/etc/postfix
-cp src/mmail/etc/mmail.etc/mmail.contfilt.regexp $base/etc/postfix/mmail
+cp -r src/mmail/etc/mmail $base/etc/postfix
+#mv $base/etc/postfix/mmail/ma*.cf.proto $base/etc/postfix
 
 # create postfix directories
 # -> über postmulti abbilden

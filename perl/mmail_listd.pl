@@ -74,7 +74,7 @@ sub sender_is_permitted
 	$list =~ s/@.*//;
 	$list =~ s/^<//;
 	
-	my $file = "$PATH/$list.permit";
+	my $file = "$/$list.permit";
 	# no file means: list access open for everyone
 	return 1 unless -f $file;
 	open FILE, "<", "$file";

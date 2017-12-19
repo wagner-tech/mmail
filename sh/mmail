@@ -33,8 +33,16 @@ then
 	exit 1
 fi
 
+# check system
+sctl=$(which systemctl)
+
 # stop postfix
-/etc/init.d/postfix stop
+if [ -n "$sctl" ]
+then
+	systemctl stop postfix
+else	
+	/etc/init.d/postfix stop
+fi
 
 case "$2" in
 amavis-vt)
@@ -74,12 +82,19 @@ mlist)
 	case "$1" in
 	enable)
 		echo "Installing mlist feature"
+		if [ "$(postconf -h smtpd_recipient_restrictions |grep mlist.contfilt.regexp)" ]
+		then
+			echo "mlist already installed"
+		else
+			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
+		fi
 		;;
 	disable)
 		echo "Deinstalling mlist feature"
+		restr=$(postconf -hf smtpd_recipient_restrictions |grep -v mlist.contfilt.regexp)
+		postconf smtpd_recipient_restrictions="$restr"
 		;;
 	esac
-	echo "Installing mlist feature"
 	;;
 tls-out)
 	commenter.pl $maincf TO $1
@@ -106,5 +121,11 @@ tls-out)
 esac
 
 # start postfix
-/etc/init.d/postfix start
+if [ -n "$sctl" ]
+then
+	systemctl start postfix || true
+else	
+	/etc/init.d/postfix start || true
+fi
+
 
