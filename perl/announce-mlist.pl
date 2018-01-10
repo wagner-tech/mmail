@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use IO::Socket::UNIX;
+use Cwd qw();
 
 # Configuration
 our $SOCK_PATH = "/var/run/mlist.sock";
@@ -23,15 +24,16 @@ die "invalid permission expression" unless
 
 my $client = IO::Socket::UNIX->new(
 	Type => SOCK_STREAM,
-#	Type => SOCK_DGRAM,
 	Peer => $SOCK_PATH,
 );
 
 die "Can't create socket: $!" unless $client;
 
-$client->send("A,$list,$perm\n");
+my $cwd = Cwd::cwd();
+
+$client->send("A,$cwd,$list,$perm\n");
     
 chomp (my $ans = <$client>);
 
-die "daemon returned $ans" unless $ans eq "0";
+die "mlistd: $ans" unless $ans eq "0";
 

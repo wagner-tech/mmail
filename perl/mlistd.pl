@@ -6,6 +6,43 @@ use IO::Socket::UNIX;
 our $SOCK_PATH = "/var/run/mlist.sock";
 our $USER_DIR = "/home/mmail";
 
+sub process_request {
+	my ($cmd,$cwd,$list,$perm) = split(/,/,shift);
+	return "1,unknown command: $cmd" unless ($cmd eq "A");
+
+	# TODO: ggf auf perl-File-Funktionen umstellen
+	my $rc = system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
+	return "$rc,grep -v failed" unless $rc == 0;
+	$rc = system("mv /tmp/aliases /etc/aliases");
+	return "$rc,mv failed" unless $rc == 0;
+	$rc = system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
+	return "$rc,append failed" unless $rc == 0;
+
+	$rc = system("ln -sf $cwd/$list $USER_DIR/$list" );
+	return "$rc,link failed" unless $rc == 0;
+
+	my $perm_path = "$USER_DIR/$list";
+	$perm_path =~ s/mlist$/perm/;
+	unlink $perm_path if (-f $perm_path);
+	if ($perm eq "all") {
+		; # do nothing
+	} elsif ($perm eq "list") {
+		$rc = system("ln -s $list $perm_path");
+		return "$rc,link list to perm failed" unless $rc == 0;
+	} else {
+		$rc = system("ln -s $cwd/$perm $perm_path");
+		return "$rc,link perm file failed" unless $rc == 0;
+	}
+	return 0;
+}
+
+# local test modus
+my $command_line = shift(@ARGV);
+if (defined $command_line) {
+	print (process_request($command_line));
+	exit;
+}
+
 unlink $SOCK_PATH if -e $SOCK_PATH;
 umask(0000);
 # define server:
@@ -14,43 +51,18 @@ my $server = IO::Socket::UNIX->new(
     Local => $SOCK_PATH,
     Listen => 1,
 );
-#my $server = IO::Socket::UNIX->new(
-#    Type => SOCK_DGRAM,
-#    Local => $SOCK_PATH,
-#    Listen => 1,
-#);
 
 die "Can't create socket: $!" unless $server;
 
 while (my $conn = $server->accept())
 {
-#	while (my $line = <$conn>) {
-#    	print("$line");# . "\n");
-#	}
-	my $line = <$conn>;
+	chomp (my $line = <$conn>);
 	my $ret = 0;
 	
-	if ($line eq "U") {
-		
-		# update list
-		$ret = system("newaliases");
-	}
-	else {
-		my ($cmd,$list,$perm) = split(/,/,$line);
-		if ($cmd eq "A") {
-			system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
-			system("mv /tmp/aliases /etc/aliases");
-			system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
-		}
-		else {
-			$ret = 1;
-		}  
-		
-	}
+	$ret = process_request($line) unless ($line eq "U");
+	return $rc unless $rc == 0;
+	# update list
+	$ret = system("newaliases");
+
 	print $conn "$ret\n";
 }
-#my $msg;
-#while (1) {
-#	$server->recv($msg,64);
-#	print("$msg");
-#}

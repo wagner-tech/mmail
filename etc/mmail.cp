@@ -27,9 +27,9 @@ cp -r src/mmail/etc/mmail $base/etc/postfix
 #mkdir -p $base/var/mail/tls_smtp
 #mkdir -p $base/var/cache/tls_smtp
 
-# copy list handler + decrypter + common stuff
+# copy deamon + common stuff
 mkdir -p $base/usr/share/perl5
-cp src/mmail/perl/*.pl $base/usr/local/bin/
+cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
 cp src/mmail/perl/mGPG.pm $base/usr/share/perl5
 
 # copy admin scripts
@@ -37,8 +37,14 @@ mkdir -p $base/usr/sbin
 cp src/mmail/sh/mmail $base/usr/sbin
 mkdir -p $base/etc/init.d
 cp src/mmail/sh/decryptd $base/etc/init.d
+cp src/mmail/sh/mlistd $base/etc/init.d
 
 # copy man page
 mkdir -p $base/usr/share/man/man8
 gzip -c src/mmail/etc/mmail.8 >$base/usr/share/man/man8/mmail.8.gz
+
+# copy mlist scripts & deamon
+mkdir -p $base/usr/bin
+cp src/mmail/perl/announce-mlist.pl $base/usr/bin/announce-mlist
+cp src/mmail/perl/update-mlist.pl $base/usr/bin/update-mlist
 
