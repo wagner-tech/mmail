@@ -2,7 +2,7 @@
 set -e # end if anything fails
 
 PROG=mlistd
-PROG_PATH=$(which $PROC) || { echo "$PROG missing"; exit 1; }
+PROG_PATH=$(which $PROG) || { echo "$PROG missing"; exit 1; }
 
 syslog=/dev/null
 syserr=/tmp/mlistd.err
@@ -13,21 +13,21 @@ RETVAL=0
 
 usage() {
 	echo "$0 [options] start|restart|stop"
-	echo "  -l <syslog>     DEFAULT: /dev/null"
-	echo "  -e <errlog>     DEFAULT: /tmp/xeventhandler.err"
+	echo "  -l <syslog>     DEFAULT: $syslog"
+	echo "  -e <errlog>     DEFAULT: $syserr"
 }
 
 start () {
 
 	# check, if process is already running
-	if pid_of_proc $pidfile $PROG_PATH >/dev/null
+	if [ `ps -ef | grep $PROG | grep -v grep | grep -v bash | wc -l` -gt 0 ]
 	then
 		log_end_msg 1
 		exit 1
 	fi
 	
 	log_daemon_msg $PROG || true
-	($PROC &) 1>>$syslog 2>>$syserr
+	($PROG &) 1>>$syslog 2>>$syserr
 	sleep 2
 	if status_of_proc $PROG
 	then
@@ -50,7 +50,7 @@ status() {
 
 stop () {
 	log_daemon_msg "Stopping $PROG"
-	killall $PROG_PATH || true
+	kill $(ps aux |grep $PROG_PATH |grep -v grep | awk '{print $2}') || true
 	return 0
 }
 

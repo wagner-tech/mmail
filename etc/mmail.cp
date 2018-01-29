@@ -31,6 +31,8 @@ cp -r src/mmail/etc/mmail $base/etc/postfix
 mkdir -p $base/usr/share/perl5
 cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
 cp src/mmail/perl/mGPG.pm $base/usr/share/perl5
+mkdir -p $base/etc/systemd/system/
+cp src/mmail/etc/mlistd.service $base/etc/systemd/system/
 
 # copy admin scripts
 mkdir -p $base/usr/sbin

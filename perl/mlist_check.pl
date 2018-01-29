@@ -6,7 +6,7 @@ use Net::SMTP;
 use strict;
 
 # define configuration
-our $PATH = "/home/mmail/etc";
+our $PATH = "/home/mmail";
 our $FREEPASS = "127.0.0.1:10025";
 
 
@@ -26,13 +26,15 @@ sub sender_is_permitted
 	$list =~ s/@.*//;
 	$list =~ s/^<//;
 	
-	my $file = "$PATH/$list.permit";
-	::log($file);
+	my $file = "$PATH/$list";
+	$file =~ s/mlist$/permit/;
+	::log("checking $file");
 	# no file means: list access open for everyone
-	return 1 unless -f $file;
+	return 1 unless -l $file;
+	::log("open $file");
 	open FILE, "<", "$file";
 	while (<FILE>) {
-		syslog("info","$_ : $sender");
+		::log("info","$_ : $sender");
 		return 1 if ($_ =~ /$sender/);
 	}
 	return 0;

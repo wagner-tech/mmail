@@ -17,10 +17,21 @@ die "list name must end with .mlist" unless $list =~ /.*\.mlist/;
 die "list not existing" unless -f $list;
 
 # check permission
-die "invalid permission expression" unless
-	$perm eq "all"
-	|| $perm eq "list"
-	|| -f $perm;
+if ($perm eq "all" || $perm eq "list") {
+	; # everythinf fine 
+}
+elsif (-f $perm) {
+	if (substr($perm,0,1) eq "/") {
+		; # absolute path
+	}
+	else {
+		my $cwd = Cwd::cwd();
+		$perm = "$cwd/$perm";
+	}
+} 
+else { 
+	die "invalid permission expression";
+}
 
 my $client = IO::Socket::UNIX->new(
 	Type => SOCK_STREAM,
@@ -29,9 +40,16 @@ my $client = IO::Socket::UNIX->new(
 
 die "Can't create socket: $!" unless $client;
 
-my $cwd = Cwd::cwd();
+# expand relative path
+if (substr($list,0,1) eq "/") {
+	; # absolute path
+}
+else {
+	my $cwd = Cwd::cwd();
+	$list = "$cwd/$list";
+}
 
-$client->send("A,$cwd,$list,$perm\n");
+$client->send("A,$list,$perm\n");
     
 chomp (my $ans = <$client>);
 

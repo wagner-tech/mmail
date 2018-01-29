@@ -1,0 +1,15 @@
+[Unit]
+Description=mlistd of mMail mailing list support
+After=network.target auditd.service
+
+[Service]
+ExecStart=/usr/local/bin/mlistd
+KillMode=process
+#Restart=on-failure
+RestartPreventExitStatus=255
+Type=simple
+
+#[Install]
+#WantedBy=multi-user.target
+#Alias=sshd.service
+
