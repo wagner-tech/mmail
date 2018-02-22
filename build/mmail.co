@@ -14,7 +14,8 @@ then
 	ln -sf ../../../perl .
 	ln -sf ../../../sh .
 else
-	git clone $(HOME)/mmail
-	checkout $1
+	git clone ${HOME}/mmail
+	cd mmail
+	git checkout $1
 fi
 
