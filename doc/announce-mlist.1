@@ -1,0 +1,38 @@
+.\" Manpage for announce-mlist.
+.\" Contact mail@wagnertech.de to correct errors or typos.
+.TH man 1 "22 Feb 2018" "1.0" "announce-mlist man page"
+.SH NAME
+announce-mlist \- announce new mailling list
+.SH SYNOPSIS
+.B announce-mlist
+LIST PERMISSION
+.SH DESCRIPTION
+.PP
+announce-mlist announces a new mailling list. The list has to be provided as a file. PERMISSION
+describes who is allowed to use the mailling list.
+.TP
+\fBLIST\fR
+file name of the mailling list
+.TP
+\fBPERMISSION\fR
+all|list|PERMFILE
+.TP
+\fBPERMFILE\fR
+file name of a list of email addresses that are permitted to use the mailling list
+.SH OPTIONS
+.TP
+\fBall\fR
+everybody is allowed to use the mailling list
+.TP
+\fBlist\fR
+all list members are allowed to use the mailling list
+.SH SEE ALSO
+mmail(8), update-mlist(1)
+.SH FILES
+The LIST or PERMFILE file contains email addresses line by line. There are two possible formats:
+
+user@host.com
+
+Real Name<user@host.com>
+.SH AUTHOR
+Michael Wagner (michael@wagnertech.de)

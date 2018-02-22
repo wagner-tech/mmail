@@ -43,7 +43,9 @@ cp src/mmail/sh/mlistd $base/etc/init.d
 
 # copy man page
 mkdir -p $base/usr/share/man/man8
-gzip -c src/mmail/etc/mmail.8 >$base/usr/share/man/man8/mmail.8.gz
+gzip -c src/mmail/doc/mmail.8 >$base/usr/share/man/man8/mmail.8.gz
+gzip -c src/mmail/doc/announce-mlist.1 >$base/usr/share/man/man1/announce-mlist.1.gz
+gzip -c src/mmail/doc/update-mlist.1 >$base/usr/share/man/man1/update-mlist.1.gz
 
 # copy mlist scripts & deamon
 mkdir -p $base/usr/bin

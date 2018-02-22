@@ -1,0 +1,60 @@
+.\" Manpage for mmail.
+.\" Contact mail@wagnertech.de to correct errors or typos.
+.TH man 8 "16 Apr 2017" "1.0" "mmail man page"
+.SH NAME
+mmail \- prepared features for postfix
+.SH SYNOPSIS
+.B mmail [
+enable|disable
+.B ]
+FEATURE
+.SH DESCRIPTION
+.PP
+mmail enhances a postfix installation for new features: enforce e2e encryption, mailing list support, serverside gnupg decryption,
+enforce tls encryption
+.PP
+Feature description
+.TP
+\fBmlist\fR
+mailing list support. This feature provides access control to mailing lists and is realized by 
+postfix' aliases feature and a pipe extension for postfix (check_mlist).
+Mailing lists are maintained by
+\fBannounce-mlist\fR and
+\fBupdate-mlist\fR user commands.
+.TP
+\fBmmail-vt\fR
+virus total support for postfix. See mmail-vt(8)
+./.TP
+./\fBe2e-in\fR
+./enforce e2e encryption for incoming mail
+./
+./To reject non encrypted incoming mails put the untrusted providers to /etc/postfix/mmail/untrusted_providers. Local accounts that need 
+./not to obey this rule are put in /home/mmail/etc/private_mail.
+./
+./TODO:
+./
+./Add your domain name to /etc/postfix/mmail/mmail.contfilt.regexp file.
+./
+./.TP
+./\fBe2e-in | e2e-out\fR
+./enforce e2e encryption for outgoing mail
+./For mail providers listed in blacklist /home/mmail/etc/private_mail end to end (e2e) encrytion is required. To enable this
+./feature for outgoing mails, put the private keys
+./of the receptients in mmail's keyring and run \fBupdate-rc.d encrypter defaults\fR. To
+./reject non encrypted incoming mails TODO. Local accounts that have not to obey this rule are put in /home/mmail/etc/private_mail.
+
+./\fBserverside gnupg decryption\fR
+./To decrypt e2e encrypted mail on this server put private keys to mmail's key ring and enable this feature by 
+./\fBupdate-rc.d decryptd defaults\fR.
+./.TP
+./\fBtls-in | tls-out\fR
+./enforce TLS encryption for outgoing or incoming mails.
+.SH SEE ALSO
+announce-mlist(1), update-mlist(1), mmail-vt(8)
+./.SH FILES
+.//etc/postfix/mmail/mmail.contfilt.regexp
+.//etc/postfix/mmail/untrusted_providers
+./.SH BUGS
+./e2e-in: Rejection of unencrypted mail does not work.
+.SH AUTHOR
+Michael Wagner (michael@wagnertech.de)
