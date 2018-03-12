@@ -3,7 +3,7 @@ Version: %BUILD%
 Section: base
 Priority: optional
 Architecture: all
-Depends: gnupg, python
+Depends: gnupg, python, postfix
 Maintainer: WagnerTech UG <mail@wagnertech.de>
 Description: mMail: A secure mailing facility
 
