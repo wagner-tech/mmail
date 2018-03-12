@@ -2,7 +2,7 @@
 set -e
 
 # check system
-sctl=$(which systemctl)
+sctl=$(which systemctl || true)
 
 # stop postfix
 if [ -n "$sctl" ]
