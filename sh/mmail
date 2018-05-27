@@ -34,19 +34,22 @@ then
 fi
 
 # check system
-sctl=$(which systemctl)
+
+# TODO: Das geht auf Debian7 nicht (RC1)
+sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
 
 # stop postfix
-if [ -n "$sctl" ]
-then
-	systemctl stop postfix
-else	
-	/etc/init.d/postfix stop
-fi
+$sctl stop postfix
 
 case "$2" in
 amavis-vt)
-	systemctl stop amavisd-new
+	if ! dpkg -l | grep mmail-vt
+	then
+		echo "Error: Install mmail-vt!"
+		exit 1
+	fi
+
+	$sctl stop amavisd-new
 	case "$1" in
 	enable) 
 		if test -f /etc/amavis/conf.d/56-mmail_scanners.no
@@ -63,18 +66,18 @@ amavis-vt)
 		fi
 		;;
 	esac
-	systemctl start amavisd-new
+	$sctl start amavisd-new
 	;;
 e2e-in)
 	commenter.pl $contfilt EEI $1
 	case "$1" in
 	enable) 
-		/etc/init.d/decryptd start
-		update-rc.d decryptd defaults 100
+		$sctl start decryptd
+		$sctl enable decrypd
 		;;
 	disable)
-		/etc/init.d/decryptd stop
-		update-rc.d -f decryptd remove
+		$sctl stop decryptd
+		$sctl disable decryptd
 		;;
 	esac
 	;;
@@ -88,15 +91,15 @@ mlist)
 		else
 			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
 		fi
-		/etc/init.d/mlistd start
-		update-rc.d mlistd defaults 100
+		$sctl start mlistd
+		$sctl enable mlistd
 		;;
 	disable)
 		echo "Deinstalling mlist feature"
 		restr=$(postconf -hf smtpd_recipient_restrictions |grep -v mlist.contfilt.regexp)
 		postconf smtpd_recipient_restrictions="$restr"
-		/etc/init.d/mlistd stop
-		update-rc.d -f mlistd remove
+		$sctl stop mlistd
+		$sctl disable mlistd
 		;;
 	esac
 	;;
@@ -125,11 +128,5 @@ tls-out)
 esac
 
 # start postfix
-if [ -n "$sctl" ]
-then
-	systemctl start postfix || true
-else	
-	/etc/init.d/postfix start || true
-fi
-
+$sctl start postfix || true
 

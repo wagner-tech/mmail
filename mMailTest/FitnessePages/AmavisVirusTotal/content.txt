@@ -8,6 +8,7 @@ Andere Scanner ausschalten
 
 
 amavis-vt einschalten
+|call script|sudo cp etc/amavis_vt.cf /etc/|
 |call script|sudo mmail enable amavis-vt|
 |call script|sleep 2|
 
@@ -25,6 +26,12 @@ Testvirus bleibt hängen
 |call script|smtp.pl ${USER}@localhost < etc/MailVirus.txt|
 |call script|sleep 3|
 |call script|! grep "Virus.txt" /var/mail/${USER}|
+
+Normale Mail kommt auch nochmal durch
+|call script|echo "" >/var/mail/${USER}|
+|call script|smtp.pl ${USER}@localhost < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|grep "neue Liste" /var/mail/${USER}|
 
 amavis-vt ausschalten
 |call script|sudo mmail disable amavis-vt|

@@ -13,6 +13,7 @@ then
 	ln -sf ../../../etc .
 	ln -sf ../../../perl .
 	ln -sf ../../../sh .
+	ln -sf ../../../doc .
 else
 	git clone ${HOME}/mmail
 	cd mmail
