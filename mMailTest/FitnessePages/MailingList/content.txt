@@ -10,7 +10,7 @@ Liste definieren
 
 Mail an Liste schicken
 |call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
-|call script|smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/mmail|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
@@ -21,7 +21,7 @@ Liste definieren
 
 Mail an Liste schicken
 |call script|sudo rm /var/mail/mmail|
-|call script|smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|! test -f /var/mail/mmail|
 
@@ -29,7 +29,7 @@ Feature ausschalten
 |call script|sudo mmail disable mlist|
 
 Mail an Liste schicken (ohne Absender-Check)
-|call script|smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/mmail|
 
