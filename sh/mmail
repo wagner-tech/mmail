@@ -52,18 +52,15 @@ amavis-vt)
 	$sctl stop amavisd-new
 	case "$1" in
 	enable) 
-		if test -f /etc/amavis/conf.d/56-mmail_scanners.no
+		if ! test -f /etc/amavis/conf.d/56-mmail_scanners
 		then 
-			mv /etc/amavis/conf.d/55-mmail_filter_mode.no /etc/amavis/conf.d/55-mmail_filter_mode
-			mv /etc/amavis/conf.d/56-mmail_scanners.no /etc/amavis/conf.d/56-mmail_scanners
+			cp /etc/amavis/conf.d/55-mmail_filter_mode.example /etc/amavis/conf.d/55-mmail_filter_mode
+			cp /etc/amavis/conf.d/56-mmail_scanners.example /etc/amavis/conf.d/56-mmail_scanners
 		fi
 		;;
 	disable)
-		if test -f /etc/amavis/conf.d/56-mmail_scanners
-		then 
-			mv /etc/amavis/conf.d/55-mmail_filter_mode /etc/amavis/conf.d/55-mmail_filter_mode.no
-			mv /etc/amavis/conf.d/56-mmail_scanners /etc/amavis/conf.d/56-mmail_scanners.no
-		fi
+		rm /etc/amavis/conf.d/55-mmail_filter_mode || true
+		rm /etc/amavis/conf.d/56-mmail_scanners || true
 		;;
 	esac
 	$sctl start amavisd-new
@@ -96,7 +93,7 @@ mlist)
 		;;
 	disable)
 		echo "Deinstalling mlist feature"
-		restr=$(postconf -hf smtpd_recipient_restrictions |grep -v mlist.contfilt.regexp)
+		restr=$(postconf -h smtpd_recipient_restrictions |sed "s!check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp!!")
 		postconf smtpd_recipient_restrictions="$restr"
 		$sctl stop mlistd
 		$sctl disable mlistd

@@ -4,12 +4,14 @@
 .SH NAME
 mmail\-vt \- virus total extension for postfix / amavisd-new
 .SH DESCRIPTION
-mmail-vt is a perl\-amavisd-new\-plugin. After installing the debian package it is enabled by default.
-To disable this feature remove TODO or use the mmail(8) feature from the mmail package.
+mmail-vt is a perl\-amavisd-new\-plugin. To enable this feature add the amavis-vt.pm to the amavis-scanners. See
+example files in /etc/amavis/conf.d/. Enabling and disabling the feature can also be
+done by the mmail(8) utility from the mmail package.
 .SH SEE ALSO
 mmail(8), postfix(8), amavisd-new(8)
 .SH FILES
-TODO
+/etc/amavis/conf.d/55-mmail-filtermode.example
+/etc/amavis/conf.d/56-mmail_scanners.example
 .SH BUGS
 No known bugs
 .SH AUTHOR

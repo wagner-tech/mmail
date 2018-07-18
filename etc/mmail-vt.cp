@@ -14,8 +14,8 @@ cp src/mmail/perl/amavis_vt.cf $base/etc/
 
 # copy amavis configuration
 mkdir -p $base/etc/amavis/conf.d/
-cp src/mmail/etc/55-mmail_filter_mode $base/etc/amavis/conf.d/
-cp src/mmail/etc/56-mmail_scanners $base/etc/amavis/conf.d/
+cp src/mmail/etc/55-mmail_filter_mode $base/etc/amavis/conf.d/55-mmail_filter_mode.example
+cp src/mmail/etc/56-mmail_scanners $base/etc/amavis/conf.d/56-mmail_scanners.example
 
 # copy man page
 mkdir -p $base/usr/share/man/man8

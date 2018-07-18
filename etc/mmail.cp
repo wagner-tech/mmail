@@ -8,10 +8,10 @@ mkdir -p $base/etc
 cp src/mmail/etc/gpg-mailgate.conf $base/etc/gpg-mailgate.conf
 
 mkdir -p $base/usr/local/bin/
-cp src/gpg-mailgate/gpg-mailgate.py $base/usr/local/bin/
+#cp src/gpg-mailgate/gpg-mailgate.py $base/usr/local/bin/
 
 mkdir -p $base/usr/lib/python2.7/
-cp -a src/gpg-mailgate/GnuPG $base/usr/lib/python2.7/
+#cp -a src/gpg-mailgate/GnuPG $base/usr/lib/python2.7/
 
 # copy postfix config
 mkdir -p $base/etc/postfix/
@@ -37,9 +37,9 @@ cp src/mmail/etc/mlistd.service $base/etc/systemd/system/
 # copy admin scripts
 mkdir -p $base/usr/sbin
 cp src/mmail/sh/mmail $base/usr/sbin
-mkdir -p $base/etc/init.d
-cp src/mmail/sh/decryptd $base/etc/init.d
-cp src/mmail/sh/mlistd $base/etc/init.d
+mkdir -p $base/etc/sysd2sysv
+cp src/mmail/sh/decryptd $base/etc/sysd2sysv/
+cp src/mmail/sh/mlistd $base/etc/sysd2sysv/
 
 # copy man page
 mkdir -p $base/usr/share/man/man1
