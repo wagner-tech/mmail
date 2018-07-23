@@ -9,6 +9,7 @@ use strict;
 our $PATH = "/home/mmail";
 our $FREEPASS = "127.0.0.1:10025";
 
+require "/etc/mlist_check.cf";
 
 sub log {
 	my ($msg) = @_;

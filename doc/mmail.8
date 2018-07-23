@@ -1,28 +1,28 @@
 .\" Manpage for mmail.
 .\" Contact mail@wagnertech.de to correct errors or typos.
-.TH man 8 "16 Apr 2017" "1.0" "mmail man page"
+.TH mmail 8 "Apr 2017" GNU-Linux "WagnerTech Utils"
 .SH NAME
 mmail \- prepared features for postfix
 .SH SYNOPSIS
-.B mmail [
-enable|disable
-.B ]
-FEATURE
+\fBmmail [\fR enable|disable|list \fB] [\fR \fIFEATURE\fR \fB]\fR
 .SH DESCRIPTION
 .PP
 mmail enhances a postfix installation for new features: enforce e2e encryption, mailing list support, serverside gnupg decryption,
-enforce tls encryption
+enforce tls encryption. \fBenable\fR and \fBdisable\fR require a \fIFEATURE\fR, \fBlist\fR lists the installation status of all
+features.
 .PP
-Feature description
+Feature description:
 .TP
-\fBmlist\fR
+.B amavisd
+Enable amavisd for postfix. It is supposed that amavisd listens on port 10024 and sends the e-mails back to port 10025.
+.TP
+.B mlist
 mailing list support. This feature provides access control to mailing lists and is realized by 
 postfix' aliases feature and a pipe extension for postfix (check_mlist).
 Mailing lists are maintained by
-\fBannounce-mlist\fR and
-\fBupdate-mlist\fR user commands.
+\fBannounce-mlist\fR and \fBupdate-mlist\fR user commands.
 .TP
-\fBmmail-vt\fR
+.B mmail-vt
 virus total support for postfix. See mmail-vt(8)
 ./.TP
 ./\fBe2e-in\fR

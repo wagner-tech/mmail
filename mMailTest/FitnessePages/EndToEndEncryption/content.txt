@@ -5,8 +5,8 @@
 Feature steht nicht zur Verfügung
 
 e2e-in einschalten
-!|test.util.CallScript|
-|call script|sudo mmail enable e2e-in|
+#!|test.util.CallScript|
+#|call script|sudo mmail enable e2e-in|
 
 Testen, ob e2e-in eingeschaltet ist.
 #|call script|sudo echo "" >/var/mail/mmail|

@@ -2,21 +2,95 @@
 set -e
 
 usage() {
-	echo "usage: mmail enable|disable FEATURE"
+	echo "usage: mmail show|enable|disable [FEATURE]"
 	echo "see man mmail(1)"
+}
+
+check_features() {
+	# set environment variables for the installed / not installed features
+	amavisd=0
+	free_pass=0
+	amavis_vt=0
+	mlist=0
+	
+	if [ -n "$(postconf -h content_filter |grep amavis)" \
+	     -a -n "$(grep amavis /etc/postfix/master.cf)" ]
+	then
+		amavisd=1
+	fi
+	if [ -n "$(grep '10025.*smtpd' /etc/postfix/master.cf)" ]
+	then
+		free_pass=1
+	fi
+	if [ -f /etc/amavis/conf.d/56-mmail_scanners ]
+	then
+		amavis_vt=1
+	fi
+	if [ -n "$(postconf -h smtpd_recipient_restrictions |grep mlist.contfilt.regexp)" ]
+	then
+		if [ -z "$(postconf -M mlist_check/unix 2>/dev/null)" ]
+		then
+			echo "mlist installation mismatch: smtpd_recipient_restrictions existing, but not mlist_check/unix in master.cf"
+			exit 1
+		fi
+		mlist=1
+	fi
+}	
+
+add_key_value() {
+	# add a key value pair to file. If the key exists, an update is performed
+	# parameters: 
+	key=$1
+	value=$2
+	file=$3
+	
+	if grep "^$key" $file > /dev/null
+	then
+		sed -i "s/^$key.*/$key $value/" $file
+	else
+		echo "$key $value" >> $file
+	fi
+}
+
+remove_key() {
+	# kemove a key from file.
+	# parameters: 
+	key=$1
+	file=$2
+
+	if grep "^$key" $file > /dev/null
+	then
+		grep -v "^$key" $file > /tmp/mmail
+		mv /tmp/mmail $file
+	fi
 }
 
 # files
 maincf="/etc/postfix/main.cf"
 contfilt="/etc/postfix/mmail/mmail.contfilt.regexp"
+mlist_check="/etc/mlist_check.cf"
 
 # check parameters
-if [ $# -ne 2 ]
+if [ $# -eq 0 \
+     -o \( $# -eq 1 -a "$1" != "list" \) ]
 then
 	echo "error: invalid parameter count"
 	usage
 	exit 1
 fi
+
+check_features
+
+if [ $1 == "list" ]
+then
+	echo "amavisd   : $amavisd"
+	echo "free_pass : $free_pass"
+	echo "amavis_vt : $amavis_vt"
+	echo "mlist     : $mlist"
+	exit 0
+fi
+
+
 case "$1" in
 enable) ;;
 disable) ;;
@@ -42,8 +116,55 @@ sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv";
 $sctl stop postfix
 
 case "$2" in
+amavisd)
+	if ! dpkg -l amavisd-new >/dev/null
+	then
+		echo "Error: Install amavisd-new!"
+		exit 1
+	fi
+	
+	case "$1" in
+	enable)
+		if [ $amavisd -eq 1 ]
+		then
+			echo "amavisd already installed"
+		else
+			postconf -e content_filter="smtp-amavis:[localhost]:10024"
+			if ! grep "smtp-amavis.*smtp" /etc/postfix/master.cf >/dev/null
+			then
+				if [ $free_pass -eq 1 ]
+				then
+					echo "Invalid master.cf: filter incomplete installed"
+					exit 1
+				fi
+				postfix-add-filter smtp-amavis 10025
+			fi
+		fi
+		if [ $mlist -eq 1 ]
+		then
+			# route mlist output to amavisd (10024)
+			add_key_value '$FREEPASS' '= "127.0.0.1:10024";' $mlist_check
+		fi
+			
+		$sctl restart amavisd-new
+		;;
+	disable)
+		if [ $amavisd -eq 0 ]
+		then
+			echo "amavisd not installed"
+		else
+			postconf content_filter=""
+		fi
+		if [ $mlist -eq 1 ]
+		then
+			# route mlist output to freepass (10025)
+			remove_key '$FREEPASS' $mlist_check
+		fi
+		;;
+	esac
+	;;
 amavis-vt)
-	if ! dpkg -l | grep mmail-vt
+	if ! dpkg -l mmail-vt
 	then
 		echo "Error: Install mmail-vt!"
 		exit 1
@@ -65,29 +186,43 @@ amavis-vt)
 	esac
 	$sctl start amavisd-new
 	;;
-e2e-in)
-	commenter.pl $contfilt EEI $1
-	case "$1" in
-	enable) 
-		$sctl start decryptd
-		$sctl enable decrypd
-		;;
-	disable)
-		$sctl stop decryptd
-		$sctl disable decryptd
-		;;
-	esac
-	;;
+#e2e-in)
+#	commenter.pl $contfilt EEI $1
+#	case "$1" in
+#	enable) 
+#		$sctl start decryptd
+#		$sctl enable decrypd
+#		;;
+#	disable)
+#		$sctl stop decryptd
+#		$sctl disable decryptd
+#		;;
+#	esac
+#	;;
 mlist)
 	case "$1" in
 	enable)
 		echo "Installing mlist feature"
-		if [ -n "$(postconf -h smtpd_recipient_restrictions |grep mlist.contfilt.regexp)" ]
+		if [ $mlist -eq 1 ]
 		then
 			echo "mlist already installed"
 		else
 			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
+			postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags=user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
+			if [ $free_pass -eq 0 ]
+			then
+				postfix-add-filter smtp-amavis 10025
+			fi
 		fi
+		# check mlist_check's target postfix port (default: 10025)
+		if [ $amavisd -eq 1 ]
+		then
+			# route to port 10024 to filter outgoing mails
+			add_key_value '$FREEPASS' '= "127.0.0.1:10024";' $mlist_check
+		else
+			remove_key '$FREEPASS' $mlist_check
+		fi
+		
 		$sctl start mlistd
 		$sctl enable mlistd
 		;;
@@ -100,24 +235,24 @@ mlist)
 		;;
 	esac
 	;;
-tls-out)
-	commenter.pl $maincf TO $1
-	case "$1" in
-	enable)
-		if test "$(postmulti -l -i postfix-smtp-tls |wc -l) -eq 1"
-		then
-			postmulti -e enable -i postfix-smtp-tls
-		else
-			postmulti -e create -I postfix-smtp-tls config_directory=/etc/postfix/smtp-tls
-		fi
-		;;
-	disable)
-		postmulti -e disable -i postfix-smtp-tls
-		postmulti -e deport -i postfix-smtp-tls
-		;;
-	esac
-
-	;;
+#tls-out)
+#	commenter.pl $maincf TO $1
+#	case "$1" in
+#	enable)
+#		if test "$(postmulti -l -i postfix-smtp-tls |wc -l) -eq 1"
+#		then
+#			postmulti -e enable -i postfix-smtp-tls
+#		else
+#			postmulti -e create -I postfix-smtp-tls config_directory=/etc/postfix/smtp-tls
+#		fi
+#		;;
+#	disable)
+#		postmulti -e disable -i postfix-smtp-tls
+#		postmulti -e deport -i postfix-smtp-tls
+#		;;
+#	esac
+#
+#	;;
 *)
 	echo "error: invalid FEATURE"
 	usage
@@ -125,5 +260,11 @@ tls-out)
 esac
 
 # start postfix
-$sctl start postfix || true
+if $sctl start postfix
+then
+	echo "$2 $1: success"
+else
+	echo "$2 $1: failed"
+	exit 1
+fi
 

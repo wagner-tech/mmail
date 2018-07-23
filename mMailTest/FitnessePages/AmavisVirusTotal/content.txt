@@ -7,8 +7,9 @@ Andere Scanner ausschalten
 |call script|!-echo "@av_scanners=();" | sudo dd of=/etc/amavis/conf.d/54_test-!|
 
 
-amavis-vt einschalten
+amavisd und amavis-vt einschalten
 |call script|sudo cp etc/amavis_vt.cf /etc/|
+|call script|sudo mmail enable amavisd|
 |call script|sudo mmail enable amavis-vt|
 |call script|sleep 2|
 
@@ -33,8 +34,9 @@ Normale Mail kommt auch nochmal durch
 |call script|sleep 3|
 |call script|grep "neue Liste" /var/mail/${USER}|
 
-amavis-vt ausschalten
+amavisd und amavis-vt ausschalten
 |call script|sudo mmail disable amavis-vt|
+|call script|sudo mmail disable amavisd|
 
 amavis-vt testen:
 

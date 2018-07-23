@@ -14,8 +14,8 @@ mkdir -p $base/usr/lib/python2.7/
 #cp -a src/gpg-mailgate/GnuPG $base/usr/lib/python2.7/
 
 # copy postfix config
-mkdir -p $base/etc/postfix/
-cp -r src/mmail/etc/mmail $base/etc/postfix
+#mkdir -p $base/etc/postfix/
+#cp -r src/mmail/etc/mmail $base/etc/postfix
 #mv $base/etc/postfix/mmail/ma*.cf.proto $base/etc/postfix
 
 # create postfix directories
@@ -27,14 +27,13 @@ cp -r src/mmail/etc/mmail $base/etc/postfix
 #mkdir -p $base/var/mail/tls_smtp
 #mkdir -p $base/var/cache/tls_smtp
 
-# copy deamon + common stuff
+# copy common stuff
 mkdir -p $base/usr/share/perl5
-cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
 cp src/mmail/perl/mGPG.pm $base/usr/share/perl5
-mkdir -p $base/etc/systemd/system/
-cp src/mmail/etc/mlistd.service $base/etc/systemd/system/
 
 # copy admin scripts
+mkdir -p $base/etc/systemd/system/
+cp src/mmail/etc/mlistd.service $base/etc/systemd/system/
 mkdir -p $base/usr/sbin
 cp src/mmail/sh/mmail $base/usr/sbin
 mkdir -p $base/etc/sysd2sysv
@@ -52,4 +51,9 @@ gzip -c src/mmail/doc/update-mlist.1 >$base/usr/share/man/man1/update-mlist.1.gz
 mkdir -p $base/usr/bin
 cp src/mmail/perl/announce-mlist.pl $base/usr/bin/announce-mlist
 cp src/mmail/perl/update-mlist.pl $base/usr/bin/update-mlist
+mkdir -p $base/usr/local/bin
+mkdir -p $base/etc
+cp src/mmail/perl/mlist_check.pl $base/usr/local/bin/
+cp src/mmail/perl/mlist_check.cf $base/etc/
+cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
 
