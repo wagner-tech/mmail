@@ -26,7 +26,7 @@ Testvirus bleibt hängen
 |call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
 |call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailVirus.txt|
 |call script|sleep 3|
-|call script|! grep "Virus.txt" /var/mail/${USER}|
+|call script|! grep "Virus.txt" /var/mail/mmail|
 
 Alle Features ausschalten
 |call script|sudo mmail disable mlist|

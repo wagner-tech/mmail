@@ -208,7 +208,7 @@ mlist)
 			echo "mlist already installed"
 		else
 			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
-			postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags=user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
+			postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
 			if [ $free_pass -eq 0 ]
 			then
 				postfix-add-filter smtp-amavis 10025

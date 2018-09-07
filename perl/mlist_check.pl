@@ -60,6 +60,8 @@ sub queue_message
   		return(0, 554, 'Error: sender not permitted to send to list') unless sender_is_permitted($sender, $r);
   	}
   }
+  
+  ::log("--------------mlist_check.pl-----------------");
 
   my $body=$$data;
 

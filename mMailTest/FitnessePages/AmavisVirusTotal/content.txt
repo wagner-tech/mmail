@@ -13,6 +13,9 @@ amavisd und amavis-vt einschalten
 |call script|sudo mmail enable amavis-vt|
 |call script|sleep 2|
 
+Datenbank löschen
+|call script|!-sudo rm /var/lib/amavis/amavis_vt.db || true -!|
+
 amavis-vt testen:
 
 Normale Mail kommt durch:
@@ -23,7 +26,12 @@ Normale Mail kommt durch:
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
-Testvirus bleibt hängen
+Testvirus bleibt hängen (Test mit VirusTotal-Aufruf)
+|call script|bin/smtp.pl ${USER}@localhost < etc/MailVirus.txt|
+|call script|sleep 3|
+|call script|! grep "Virus.txt" /var/mail/${USER}|
+
+Testvirus bleibt hängen (Test mit Datenbank)
 |call script|bin/smtp.pl ${USER}@localhost < etc/MailVirus.txt|
 |call script|sleep 3|
 |call script|! grep "Virus.txt" /var/mail/${USER}|
