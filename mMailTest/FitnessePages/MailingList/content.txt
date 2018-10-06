@@ -9,10 +9,12 @@ Liste definieren
 |call script|announce-mlist etc/liste.mlist all|
 
 Mail an Liste schicken
-|call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+|call script|if [ -f /var/mail/user2 ]; then sudo rm /var/mail/user2; fi|
 |call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
-|call script|sudo grep "neue Liste" /var/mail/mmail|
+|call script|sudo grep "neue Liste" /var/mail/user1|
+|call script|sudo grep "neue Liste" /var/mail/user2|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
@@ -20,10 +22,10 @@ Liste definieren
 |call script|announce-mlist etc/liste.mlist list|
 
 Mail an Liste schicken
-|call script|sudo rm /var/mail/mmail|
+|call script|sudo rm /var/mail/user1|
 |call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
-|call script|! test -f /var/mail/mmail|
+|call script|! test -f /var/mail/user1|
 
 Feature ausschalten
 |call script|sudo mmail disable mlist|
@@ -31,5 +33,5 @@ Feature ausschalten
 Mail an Liste schicken (ohne Absender-Check)
 |call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
-|call script|sudo grep "neue Liste" /var/mail/mmail|
+|call script|sudo grep "neue Liste" /var/mail/user1|
 

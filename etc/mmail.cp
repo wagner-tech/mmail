@@ -55,4 +55,5 @@ mkdir -p $base/etc
 cp src/mmail/perl/mlist_check.pl $base/usr/local/bin/
 cp src/mmail/perl/mlist_check.cf $base/etc/
 cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
+mkdir -p $base/var/mmail
 

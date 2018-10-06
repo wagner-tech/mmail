@@ -4,7 +4,7 @@ use IO::Socket::UNIX;
 
 # Configuration
 our $SOCK_PATH = "/var/run/mlist.sock";
-our $USER_DIR = "/home/mmail";
+our $USER_DIR = "/var/mmail";
 
 sub process_request {
 	my ($cmd,$list_path,$perm) = split(/,/,shift);
