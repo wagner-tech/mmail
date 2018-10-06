@@ -1,0 +1,7 @@
+!1 Testvorbereitung
+
+Mailempfänger anlegen
+
+!|test.util.CallScript|
+|call script|if ! grep user1 /etc/passwd; then sudo adduser --quiet --disabled-login --gecos user1 user1; fi|
+|call script|if ! grep user2 /etc/passwd; then sudo adduser --quiet --disabled-login --gecos user2 user2; fi|
