@@ -146,7 +146,7 @@ amavisd)
 			add_key_value '$FREEPASS' '= "127.0.0.1:10024";' $mlist_check
 		fi
 			
-		$sctl restart amavisd-new
+		$sctl restart amavis
 		;;
 	disable)
 		if [ $amavisd -eq 0 ]
@@ -170,7 +170,7 @@ amavis-vt)
 		exit 1
 	fi
 
-	$sctl stop amavisd-new
+	$sctl stop amavis
 	case "$1" in
 	enable) 
 		if ! test -f /etc/amavis/conf.d/56-mmail_scanners
@@ -184,7 +184,7 @@ amavis-vt)
 		rm /etc/amavis/conf.d/56-mmail_scanners || true
 		;;
 	esac
-	$sctl start amavisd-new
+	$sctl start amavis
 	;;
 #e2e-in)
 #	commenter.pl $contfilt EEI $1
