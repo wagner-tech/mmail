@@ -28,9 +28,17 @@ check_features() {
 	fi
 	if [ -n "$(postconf -h smtpd_recipient_restrictions |grep mlist.contfilt.regexp)" ]
 	then
-		if [ -z "$(postconf -M mlist_check/unix 2>/dev/null)" ]
+			# with fix for Debian7
+		if [ -n "$(postconf -M mlist_check/unix 2>/dev/null)" \
+			-o -n "$(postconf -M mlist_check.unix 2>/dev/null)" ]
 		then
+			echo
+		else
 			echo "mlist installation mismatch: smtpd_recipient_restrictions existing, but not mlist_check/unix in master.cf"
+			echo "To fix this run:"
+			echo "sudo postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'"
+			echo "or on old systems:"
+			echo "cp /etc/postfix/master.cf xxx; echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl  ' >> xxx; sudo mv xxx /etc/postfix/master.cf"
 			exit 1
 		fi
 		mlist=1
@@ -108,8 +116,6 @@ then
 fi
 
 # check system
-
-# TODO: Das geht auf Debian7 nicht (RC1)
 sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
 
 # stop postfix
@@ -206,9 +212,13 @@ mlist)
 		if [ $mlist -eq 1 ]
 		then
 			echo "mlist already installed"
+			echo "checking configuration ..."
 		else
 			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
-			postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
+			# does not work with Debian7
+			#postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
+			# workaround:
+			echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}' >> /etc/postfix/master.cf
 			if [ $free_pass -eq 0 ]
 			then
 				postfix-add-filter smtp-amavis 10025
@@ -223,7 +233,7 @@ mlist)
 			remove_key '$FREEPASS' $mlist_check
 		fi
 		
-		$sctl start mlistd
+		$sctl restart mlistd
 		$sctl enable mlistd
 		;;
 	disable)

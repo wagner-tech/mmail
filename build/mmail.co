@@ -6,7 +6,7 @@ then
 	git clone https://github.com/ajgon/gpg-mailgate.py gpg-mailgate
 fi
 
-if [ "$1" == "TOP" ]
+if [ "$1" == "TOP" -o "$1" == "1TOP" ]
 then
 	mkdir -p mmail
 	pushd mmail 2>/dev/null
