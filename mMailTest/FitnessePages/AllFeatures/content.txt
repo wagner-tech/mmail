@@ -30,7 +30,7 @@ Testvirus bleibt hängen
 
 Alle Features ausschalten
 |call script|sudo mmail disable mlist|
-|call script|sudo mmail disable amavisd|
+|call script|sudo mmail disable amavis-vt|
 |call script|sudo mmail disable amavisd|
 
 Andere Scanner wieder einschalten
