@@ -23,7 +23,7 @@ Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on a
 postfix nicht ordentlich gestartet.
 
 Testvirus bleibt hängen
-|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/mmail; fi|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
 |call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailVirus.txt|
 |call script|sleep 3|
 |call script|! grep "Virus.txt" /var/mail/user1|
