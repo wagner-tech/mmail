@@ -11,7 +11,7 @@ Liste definieren
 Mail an Liste schicken
 |call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
 |call script|if [ -f /var/mail/user2 ]; then sudo rm /var/mail/user2; fi|
-|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/user1|
 |call script|sudo grep "neue Liste" /var/mail/user2|
@@ -23,7 +23,7 @@ Liste definieren
 
 Mail an Liste schicken
 |call script|sudo rm /var/mail/user1|
-|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|! test -f /var/mail/user1|
 
@@ -31,7 +31,7 @@ Feature ausschalten
 |call script|sudo mmail disable mlist|
 
 Mail an Liste schicken (ohne Absender-Check)
-|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/user1|
 

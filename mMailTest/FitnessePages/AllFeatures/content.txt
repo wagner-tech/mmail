@@ -16,7 +16,7 @@ Liste definieren
 
 Normale Mail an Verteiler kommt durch:
 |call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
-|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/mmail|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
@@ -24,7 +24,7 @@ postfix nicht ordentlich gestartet.
 
 Testvirus bleibt hängen
 |call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
-|call script|bin/smtp.pl liste.mlist@$(postconf -h myhostname) < etc/MailVirus.txt|
+|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailVirus.txt|
 |call script|sleep 3|
 |call script|! grep "Virus.txt" /var/mail/mmail|
 
