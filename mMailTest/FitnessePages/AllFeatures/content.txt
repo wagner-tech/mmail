@@ -15,18 +15,18 @@ Liste definieren
 |call script|announce-mlist etc/liste.mlist all|
 
 Normale Mail an Verteiler kommt durch:
-|call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
-|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailAnhang.txt|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
 |call script|sleep 3|
-|call script|sudo grep "neue Liste" /var/mail/mmail|
+|call script|sudo grep "neue Liste" /var/mail/user1|
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
 Testvirus bleibt hängen
-|call script|if [ -f /var/mail/mmail ]; then sudo rm /var/mail/mmail; fi|
-|call script|bin/smtp.pl liste.mlist@$(/usr/sbin/postconf -h myhostname) < etc/MailVirus.txt|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/mmail; fi|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailVirus.txt|
 |call script|sleep 3|
-|call script|! grep "Virus.txt" /var/mail/mmail|
+|call script|! grep "Virus.txt" /var/mail/user1|
 
 Alle Features ausschalten
 |call script|sudo mmail disable mlist|

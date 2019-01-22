@@ -13,7 +13,7 @@ require "/etc/mlist_check.cf";
 
 sub log {
 	my ($msg) = @_;
-	syslog(LOG_INFO | LOG_MAIL, $msg);
+	syslog("info|mail", $msg);
 }
 
 sub sender_is_permitted
@@ -29,56 +29,22 @@ sub sender_is_permitted
 	
 	my $file = "$PATH/$list";
 	$file =~ s/mlist$/permit/;
-	::log("checking $file");
+	
+	
 	# no file means: list access open for everyone
-	return 1 unless -l $file;
-	::log("open $file");
+	unless (-l $file) {
+		::log("free list access to $list");
+		return 1;
+	}
 	open FILE, "<", "$file";
 	while (<FILE>) {
-		::log("info","$_ : $sender");
-		return 1 if ($_ =~ /$sender/);
+		if ($_ =~ /$sender/) {
+			::log("free list access for $sender to $list");
+			return 1;
+		}
 	}
 	return 0;
 }
-
-sub queue_message
-{
-  my($session, $data) = @_;
-
-  my $sender = $session->get_sender();
-  my @recipients = $session->get_recipients();
-
-  return(0, 554, 'Error: no valid recipients') unless(@recipients);
-  
-  # check for mlist support
-  my $listpattern = "";#\.mlist\@$DOMAIN";
-  foreach my $r (@recipients) {
-  	if ($r =~ /$listpattern/) {
-		syslog("info","checking list access");
-  		
-  		# check, whether sender is permitteted to send to the list
-  		return(0, 554, 'Error: sender not permitted to send to list') unless sender_is_permitted($sender, $r);
-  	}
-  }
-  
-  ::log("--------------mlist_check.pl-----------------");
-
-  my $body=$$data;
-
-  my $smtp = Net::SMTP->new("$FREEPASS");
-  $smtp->mail($sender);
-  $smtp->recipient(@recipients);
-  $smtp->data();
-  $smtp->datasend("$body");
-  $smtp->dataend();
-  my $response=$smtp->message();
-  if ($response=~/^(.+)\r?\n(.+)$/ms) { $response="$2"; }
-  my $code=$smtp->code();
-  $smtp->quit;
-
-  return(1, $code, "$response");
-}
-
 
 # Read e-mail from stdin
 my $raw;
@@ -87,12 +53,10 @@ while (<STDIN>) {
 }
 my $sender = shift;
 my @to_addrs = @ARGV;
-::log("Mail from $sender to ".$to_addrs[0]);
 
 foreach my $to (@to_addrs) {
-	sender_is_permitted($sender, $to) || die("554: sender not permitted to send to list $to");
+	sender_is_permitted($sender, $to) || die("554: sender $sender not permitted to send to list $to");
 }
-::log("mail ok");
 
 # forward mail
 my $smtp = Net::SMTP->new("$FREEPASS");
