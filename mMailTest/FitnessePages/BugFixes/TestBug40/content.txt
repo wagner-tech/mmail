@@ -1,0 +1,20 @@
+Fehlertext: mlist: Erfolgreiche Zustellung füht zusätzlich zu einer Fehlermail beim Absender
+
+mlist einschalten
+
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+
+Liste definieren, an die jeder senden darf
+|call script|announce-mlist etc/liste.mlist all|
+
+Mail an Liste schicken. Mail farf nicht zurückkommen
+|call script|if [ -f /var/mail/${USER} ]; then sudo rm /var/mail/${USER}; fi|
+|call script|bin/smtp.pl liste.mlist@${HOSTNAME} < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|! test -f /var/mail/${USER}|
+Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
+postfix nicht ordentlich gestartet.
+
+Feature ausschalten
+|call script|sudo mmail disable mlist|
