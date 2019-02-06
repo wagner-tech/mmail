@@ -55,7 +55,7 @@ my $sender = shift;
 my @to_addrs = @ARGV;
 
 foreach my $to (@to_addrs) {
-	sender_is_permitted($sender, $to) || die("554: sender $sender not permitted to send to list $to");
+	sender_is_permitted($sender, $to) || die("5.5.4: sender $sender not permitted to send to list $to");
 }
 
 # forward mail
@@ -65,9 +65,11 @@ $smtp->recipient(@to_addrs);
 $smtp->data();
 $smtp->datasend("$raw");
 $smtp->dataend();
-my $response=$smtp->message();
-if ($response=~/^(.+)\r?\n(.+)$/ms) { die($2); }
-#my $code=$smtp->code();
+my $code=$smtp->code();
+if ($code != 250) {
+	my $response=$smtp->message();
+	die($response);
+}
 $smtp->quit;
 
 exit 0;
