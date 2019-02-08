@@ -1,0 +1,22 @@
+<html>
+<body>
+<h2>mlist: Verwaltung von Mailling-Listen</h2>
+<p>Die Verwaltung von Mailling-Listen erfolgt in einem einfachen Dateiformat:</p>
+<pre>
+"Teilneher Eins" &lt;teilnehmer.eins@provider.de&gt;
+"Teilneher Zwei" &lt;teilnehmer_zwei@provider.com&gt;
+</pre>
+<p>Diese Datei kann entweder auf dem eigenen Rechner oder auf dem Server verwaltet werden.</p>
+<ul>
+	<li>Bei der Verwaltung auf dem eigenen Rechner muss die Datei nach einer &Auml;nderung auf den
+		Server kopiert werden. Ein geeignetes Programm daf&uuml;r ist WinSCP (Windows) oder gftp (Linux).</li>
+	<li>Soll die Datei direkt auf dem Server bearbeitet werden, meldet sich der Bearbeiter am Server
+		an (Windows: Putty, Linux: Shell), editiert die Datei (Befehl: <code>nano &lt;liste&gt;.mlist</code>)
+		und speichert sie.</li>
+</ul>
+<p>Nach einer &Auml;nderung muss diese aktiviert werden. Dazu muss sich der Bearbeiter auf dem Server einloggen
+(Windows: Putty, Linux: Shell) und auf dem Server das Kommando <code>update-mlist</code> absetzen.</p>
+
+</body>
+</html>
+
