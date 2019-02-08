@@ -8,7 +8,7 @@ mlist einschalten
 Liste definieren, an die jeder senden darf
 |call script|announce-mlist etc/liste.mlist all|
 
-Mail an Liste schicken. Mail farf nicht zurückkommen
+Mail an Liste schicken. Mail darf nicht zurückkommen
 |call script|if [ -f /var/mail/${USER} ]; then sudo rm /var/mail/${USER}; fi|
 |call script|bin/smtp.pl liste.mlist@${HOSTNAME} < etc/MailAnhang.txt|
 |call script|sleep 3|
