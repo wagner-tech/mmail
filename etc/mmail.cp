@@ -35,9 +35,6 @@ mkdir -p $base/etc/systemd/system/
 cp src/mmail/etc/mlistd.service $base/etc/systemd/system/
 mkdir -p $base/usr/sbin
 cp src/mmail/sh/mmail $base/usr/sbin
-mkdir -p $base/etc/sysd2sysv
-cp src/mmail/sh/decryptd $base/etc/sysd2sysv/
-cp src/mmail/sh/mlistd $base/etc/sysd2sysv/
 
 # copy man page
 mkdir -p $base/usr/share/man/man1
