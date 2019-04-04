@@ -43,3 +43,5 @@ make deb
 
 0.2: mlist
 
+0.3: correct mlist processing for strange STRATO forwarded adresses
+

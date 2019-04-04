@@ -54,6 +54,9 @@ while (<STDIN>) {
 my $sender = shift;
 my @to_addrs = @ARGV;
 
+# convert strange STRATO forward address
+$sender =~ s/.*=.*=.*=(.*)=(.*)@.*/$2\@$1/;
+
 foreach my $to (@to_addrs) {
 	sender_is_permitted($sender, $to) || die("5.5.4: sender $sender not permitted to send to list $to");
 }
