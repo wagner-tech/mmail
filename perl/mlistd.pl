@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use IO::Socket::UNIX;
+use strict;
 
 # Configuration
 our $SOCK_PATH = "/var/run/mlist.sock";
@@ -60,15 +61,17 @@ my $server = IO::Socket::UNIX->new(
 
 die "Can't create socket: $!" unless $server;
 
-while (my $conn = $server->accept())
+while (1)
 {
-	chomp (my $line = <$conn>);
-	my $ret = 0;
+	if (my $conn = $server->accept()) {
+		chomp (my $line = <$conn>);
+		my $ret = 0;
 	
-	$ret = process_request($line) unless ($line eq "U");
-	return $rc unless $rc == 0;
-	# update list
-	$ret = system("newaliases");
-
-	print $conn "$ret\n";
+		$ret = process_request($line) unless ($line eq "U");
+		if ($ret == 0) {
+			# update list
+			$ret = system("newaliases");
+		}
+		print $conn "$ret\n";
+	}
 }
