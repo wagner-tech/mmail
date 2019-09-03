@@ -41,6 +41,21 @@ check_features() {
 			echo "cp /etc/postfix/master.cf xxx; echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl  ' >> xxx; sudo mv xxx /etc/postfix/master.cf"
 			exit 1
 		fi
+		
+		# checks for host names
+		hostname=$(hostname)
+		myhostname=$(postconf -h myhostname)
+		filtername=$(grep FILTER /etc/postfix/mmail/mlist.contfilt.regexp |sed 's!/.*@\(.*\)/.*!\1!')
+		if [ "$hostname" != "$myhostname" ]
+		then
+			echo "warning: hostname vs myhostname: $hostname / $myhostname"
+			exit_code=1
+		fi
+		if [ "$myhostname" != "$filtername" ]
+		then
+			echo "error: myhostname differs from filtername: $myhostname / $filtername"
+			exit 2
+		fi
 		mlist=1
 	fi
 }	
@@ -72,6 +87,8 @@ remove_key() {
 		mv /tmp/mmail $file
 	fi
 }
+
+exit_code=0
 
 # files
 maincf="/etc/postfix/main.cf"
@@ -215,10 +232,13 @@ mlist)
 			echo "checking configuration ..."
 		else
 			postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
-			# does not work with Debian7
+			# does not work with Debian7 / Debian10 (Speicherzugriffsverletzung)
 			#postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
 			# workaround:
-			echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}' >> /etc/postfix/master.cf
+			if ! grep mlist_check /etc/postfix/master.cf
+			then
+				echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}' >> /etc/postfix/master.cf
+			fi
 			if [ $free_pass -eq 0 ]
 			then
 				postfix-add-filter smtp-amavis 10025
@@ -277,4 +297,6 @@ else
 	echo "$2 $1: failed"
 	exit 1
 fi
+
+exit $exit_code
 
