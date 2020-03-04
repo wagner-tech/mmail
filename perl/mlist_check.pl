@@ -38,7 +38,7 @@ sub sender_is_permitted
 	}
 	open FILE, "<", "$file";
 	while (<FILE>) {
-		if ($_ =~ /$sender/) {
+		if ($_ =~ /$sender/i) {
 			::log("free list access for $sender to $list");
 			return 1;
 		}
