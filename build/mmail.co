@@ -14,6 +14,7 @@ then
 	ln -sf ../../../perl .
 	ln -sf ../../../sh .
 	ln -sf ../../../doc .
+	ln -sf ../../../LICENSE .
 else
 	git clone ${HOME}/mMail mmail
 	cd mmail

@@ -43,6 +43,11 @@ gzip -c src/mmail/doc/mmail.8 >$base/usr/share/man/man8/mmail.8.gz
 gzip -c src/mmail/doc/announce-mlist.1 >$base/usr/share/man/man1/announce-mlist.1.gz
 gzip -c src/mmail/doc/update-mlist.1 >$base/usr/share/man/man1/update-mlist.1.gz
 
+# copy doc
+mkdir -p $base/usr/share/doc/mmail
+cp src/mmail/LICENSE $base/usr/share/doc/mmail/copyright
+cp src/mmail/doc/README.debian $base/usr/share/doc/mmail/
+
 # copy mlist scripts & deamon
 mkdir -p $base/usr/bin
 cp src/mmail/perl/announce-mlist.pl $base/usr/bin/announce-mlist
