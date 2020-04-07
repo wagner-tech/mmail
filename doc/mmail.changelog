@@ -1,0 +1,17 @@
+mmail (0.4) unstable; urgency=medium
+  * footer for mlist
+  * mlist size limitation
+  * GET service
+  * Debian 10 support
+ -- Michael Wagner <michael@wagnertech.de>  Sat, 06 Apr 2019 20:03:04 +0100
+
+mmail (0.3) unstable; urgency=medium
+  * mlist mailling list support
+  * Debian 7 support
+ -- Michael Wagner <michael@wagnertech.de>  Sat, 06 Apr 2019 20:03:04 +0100
+
+mmail (0.2) unstable; urgency=medium
+  * mmail-vt: virus total adapter
+ -- Michael Wagner <michael@wagnertech.de>  Sat, 06 Apr 2019 20:03:04 +0100
+
+

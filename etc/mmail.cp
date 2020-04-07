@@ -46,7 +46,8 @@ gzip -c src/mmail/doc/update-mlist.1 >$base/usr/share/man/man1/update-mlist.1.gz
 # copy doc
 mkdir -p $base/usr/share/doc/mmail
 cp src/mmail/LICENSE $base/usr/share/doc/mmail/copyright
-cp src/mmail/doc/README.debian $base/usr/share/doc/mmail/
+cp src/mmail/doc/mmail.README.debian $base/usr/share/doc/mmail/README.debian
+cp src/mmail/doc/mmail.changelog $base/usr/share/doc/mmail/changelog
 
 # copy mlist scripts & deamon
 mkdir -p $base/usr/bin

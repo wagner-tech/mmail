@@ -1,4 +1,19 @@
 # default configuration
-# $PATH = "/home/mmail";
-# $FREEPASS = "127.0.0.1:10025";
+
+# This PATH must correspond to the path announce-mlist puts its links.
+#$PATH = "/var/mmail";
+
+#$FREEPASS = "127.0.0.1:10025";
+
+# TEXTFOOTER: If not empty these strings are appended to a text/HTML mail
+#$TEXTFOOTER = "\n\n---\nmlist service provided by WagnerTech UG (www.wagnertech.de)\n";
+#$HTMLFOOTER = '<hl><p>mlist service provided by <a href="http://wagnertech.de">WagnerTech UG</a></p>'."\n";
+
+# If a mail is bigger than MAXMAILSIZE, it is rejected
+#$MAXMAILSIZE = 1000000;
+
+# This address is used as sender for service mails like GET 
+#$SERVICE_SENDER = "do-not-reply@wagnertech.de";
+
+
 1;

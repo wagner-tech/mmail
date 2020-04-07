@@ -18,6 +18,15 @@ Mail an Liste schicken
 Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
 postfix nicht ordentlich gestartet.
 
+mlist hängt footer dran
+|call script|sudo grep "mlist service provided by" /var/mail/user2|
+
+Über GET Liste abfragen
+|call script|if [ -f /var/mail/$USER ]; then sudo rm /var/mail/$USER; fi|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailGet.txt|
+|call script|sleep 3|
+|call script|sudo grep "user1" /var/mail/$USER|
+
 Liste definieren, an die nur die Listenteilnehmer senden dürfen, der Tester also nicht
 |call script|announce-mlist etc/liste.mlist list|
 
