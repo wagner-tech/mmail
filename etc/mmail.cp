@@ -54,9 +54,10 @@ mkdir -p $base/usr/bin
 cp src/mmail/perl/announce-mlist.pl $base/usr/bin/announce-mlist
 cp src/mmail/perl/update-mlist.pl $base/usr/bin/update-mlist
 mkdir -p $base/usr/local/bin
+mkdir -p $base/usr/sbin
 mkdir -p $base/etc
 cp src/mmail/perl/mlist_check.pl $base/usr/local/bin/
 cp src/mmail/perl/mlist_check.cf $base/etc/
-cp src/mmail/perl/mlistd.pl $base/usr/local/bin/mlistd
+cp src/mmail/perl/mlistd.pl $base/usr/sbin/mlistd
 mkdir -p $base/var/mmail
 

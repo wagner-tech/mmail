@@ -3,7 +3,7 @@ Description=mlistd of mMail mailing list support
 After=network.target auditd.service
 
 [Service]
-ExecStart=/usr/local/bin/mlistd
+ExecStart=/usr/sbin/mlistd
 KillMode=process
 #Restart=on-failure
 RestartPreventExitStatus=255
