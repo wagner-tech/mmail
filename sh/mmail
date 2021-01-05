@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# check system
+sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
+
 usage() {
 	echo "usage: mmail show|enable|disable [FEATURE]"
 	echo "see man mmail(1)"
@@ -55,6 +58,13 @@ check_features() {
 		then
 			echo "error: myhostname differs from filtername: $myhostname / $filtername"
 			exit 2
+		fi
+		if ! $sctl status mlistd 1>/dev/null
+		then
+			echo "error: mlist installed, but mlistd not running"
+			exit_code=2
+			mlist=err
+			return
 		fi
 		mlist=1
 	fi
@@ -131,9 +141,6 @@ then
 	echo "Run this script with root privileges!"
 	exit 1
 fi
-
-# check system
-sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
 
 # stop postfix
 $sctl stop postfix
@@ -235,7 +242,7 @@ mlist)
 			# does not work with Debian7 / Debian10 (Speicherzugriffsverletzung)
 			#postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'
 			# workaround:
-			if ! grep mlist_check /etc/postfix/master.cf
+			if ! grep mlist_check /etc/postfix/master.cf >/dev/null
 			then
 				echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}' >> /etc/postfix/master.cf
 			fi

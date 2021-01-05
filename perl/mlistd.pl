@@ -9,36 +9,51 @@ our $USER_DIR = "/var/mmail";
 
 sub process_request {
 	my ($cmd,$list_path,$perm) = split(/,/,shift);
-	return "1,unknown command: $cmd" unless ($cmd eq "A");
+	
+	if ($cmd eq "A") {
 
-	# parse list_path
-	my $list_dir = $list_path;
-	$list_dir =~ s/[^\/]*$//;
-	my $list = $list_path;
-	$list =~ s/.*\///;
+		# parse list_path
+		my $list_dir = $list_path;
+		$list_dir =~ s/[^\/]*$//;
+		my $list = $list_path;
+		$list =~ s/.*\///;
+	
+		# TODO: ggf auf perl-File-Funktionen umstellen
+		my $rc = system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
+		return "$rc,grep -v failed" unless $rc == 0;
+		$rc = system("mv /tmp/aliases /etc/aliases");
+		return "$rc,mv failed" unless $rc == 0;
+		$rc = system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
+		return "$rc,append failed" unless $rc == 0;
+	
+		$rc = system("ln -sf $list_path $USER_DIR/$list" );
+		return "$rc,link failed" unless $rc == 0;
+	
+		my $perm_path = "$USER_DIR/$list";
+		$perm_path =~ s/mlist$/permit/;
+		unlink $perm_path if (-l $perm_path);
+		if ($perm eq "all") {
+			; # do nothing
+		} elsif ($perm eq "list") {
+			$rc = system("ln -s $USER_DIR/$list $perm_path");
+			return "$rc,link list to perm failed" unless $rc == 0;
+		} else {
+			$rc = system("ln -s $perm $perm_path");
+			return "$rc,link perm file failed" unless $rc == 0;
+		}
+	}
+	elsif ($cmd eq "D") {
+		# delete request
 
-	# TODO: ggf auf perl-File-Funktionen umstellen
-	my $rc = system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
-	return "$rc,grep -v failed" unless $rc == 0;
-	$rc = system("mv /tmp/aliases /etc/aliases");
-	return "$rc,mv failed" unless $rc == 0;
-	$rc = system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
-	return "$rc,append failed" unless $rc == 0;
-
-	$rc = system("ln -sf $list_path $USER_DIR/$list" );
-	return "$rc,link failed" unless $rc == 0;
-
-	my $perm_path = "$USER_DIR/$list";
-	$perm_path =~ s/mlist$/permit/;
-	unlink $perm_path if (-l $perm_path);
-	if ($perm eq "all") {
-		; # do nothing
-	} elsif ($perm eq "list") {
-		$rc = system("ln -s $USER_DIR/$list $perm_path");
-		return "$rc,link list to perm failed" unless $rc == 0;
-	} else {
-		$rc = system("ln -s $perm $perm_path");
-		return "$rc,link perm file failed" unless $rc == 0;
+		# get list name
+		my $list = $list_path;
+		$list =~ s/.*\///;
+		$list =~ s/.mlist$//;
+		
+		unlink glob "$USER_DIR/$list.*";
+	}
+	else {
+		return "1,unknown command: $cmd";
 	}
 	return 0;
 }

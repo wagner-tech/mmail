@@ -1,0 +1,57 @@
+.\" Manpage for announce-mlist.
+.\" Contact mail@wagnertech.de to correct errors or typos.
+.TH man 1 "10 Dec 2020" "1.0" "announce-mlist man page"
+.SH NAME
+mlist \- CLI to mMails mailing list functionality
+.SH SYNOPSIS
+.B mlist
+COMMAND [LIST PERMISSION]
+.SH DESCRIPTION
+.PP
+mlist provides the following commands:
+.TP
+\fBannounce LIST PERMISSION\fR
+announces a new mailling list. The list has to be provided as a file with name LIST.mlist. PERMISSION
+describes who is allowed to use the mailling list.
+.TP
+\fBdelete LIST\fR
+deletes list LIST. Only the system link is deleted, user data remains.
+.TP
+\fBget LIST\fR
+Return list members
+.TP
+\fBinfo LIST\fR
+provides information on LIST: list location, permission information.
+.TP
+\fBlist\fR
+check mlist installation and print a list of all mailing lists.
+.TP
+\fBupdate\fR
+If the content of the file LIST.mlist is updated, this has to be finished by calling 'mlist update'.
+For any other changes re-announce the list.
+
+.PP
+Parameters:
+.TP
+\fBLIST\fR
+file name of the mailling list
+.TP
+\fBPERMISSION\fR
+all|list|PERMFILE
+
+\fBall:\fR everybody is allowed to use the mailling list
+
+\fBlist:\fR all list members are allowed to use the mailling list
+
+\fBPERMFILE:\fR file name of a list of email addresses that are permitted to use the mailling list
+
+.SH SEE ALSO
+mmail(8), update-mlist(1)
+.SH FILES
+The LIST or PERMFILE file contains email addresses line by line. There are two possible formats:
+
+user@host.com
+
+Real Name<user@host.com>
+.SH AUTHOR
+Michael Wagner (michael@wagnertech.de)
