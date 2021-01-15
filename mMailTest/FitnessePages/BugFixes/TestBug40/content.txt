@@ -6,7 +6,7 @@ mlist einschalten
 |call script|sudo mmail enable mlist|
 
 Liste definieren, an die jeder senden darf
-|call script|announce-mlist etc/liste.mlist all|
+|call script|mlist announce etc/liste.mlist all|
 
 Mail an Liste schicken. Mail darf nicht zurückkommen
 |call script|if [ -f /var/mail/${USER} ]; then sudo rm /var/mail/${USER}; fi|

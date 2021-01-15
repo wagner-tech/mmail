@@ -40,8 +40,7 @@ cp src/mmail/sh/mmail $base/usr/sbin
 mkdir -p $base/usr/share/man/man1
 mkdir -p $base/usr/share/man/man8
 gzip -c src/mmail/doc/mmail.8 >$base/usr/share/man/man8/mmail.8.gz
-gzip -c src/mmail/doc/announce-mlist.1 >$base/usr/share/man/man1/announce-mlist.1.gz
-gzip -c src/mmail/doc/update-mlist.1 >$base/usr/share/man/man1/update-mlist.1.gz
+gzip -c src/mmail/doc/mlist.1 >$base/usr/share/man/man1/mlist.1.gz
 
 # copy doc
 mkdir -p $base/usr/share/doc/mmail
@@ -51,8 +50,11 @@ cp src/mmail/doc/mmail.changelog $base/usr/share/doc/mmail/changelog
 
 # copy mlist scripts & deamon
 mkdir -p $base/usr/bin
-cp src/mmail/perl/announce-mlist.pl $base/usr/bin/announce-mlist
-cp src/mmail/perl/update-mlist.pl $base/usr/bin/update-mlist
+cp src/mmail/sh/announce-mlist $base/usr/bin/
+cp src/mmail/sh/update-mlist $base/usr/bin/
+cp src/mmail/perl/mlist.pl $base/usr/bin/mlist
+mkdir -p $base/usr/share/perl5/
+cp src/mmail/perl/mMail.pm $base/usr/share/perl5/
 mkdir -p $base/usr/local/bin
 mkdir -p $base/usr/sbin
 mkdir -p $base/etc

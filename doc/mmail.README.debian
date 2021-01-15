@@ -2,6 +2,5 @@ mmail
 =====
 
 The debian packages are tested aigainst:
-- Debian7 32bit (i386)
 - Debian10 (buster) 64bit (amd64)
 

@@ -5,7 +5,7 @@ mlist einschalten
 !|test.util.CallScript|
 |call script|sudo mmail enable mlist|
 
-Liste definieren, an die jeder senden darf
+Liste definieren, an die jeder senden darf (alter Stil)
 |call script|announce-mlist etc/liste.mlist all|
 
 Mail an Liste schicken
@@ -27,14 +27,23 @@ mlist hängt footer dran
 |call script|sleep 3|
 |call script|sudo grep "user1" /var/mail/$USER|
 
-Liste definieren, an die nur die Listenteilnehmer senden dürfen, der Tester also nicht
-|call script|announce-mlist etc/liste.mlist list|
+Liste definieren, an die nur die Listenteilnehmer senden dürfen, der Tester also nicht (neuer Stil)
+|call script|mlist announce etc/liste.mlist list|
 
 Mail an Liste schicken
 |call script|sudo rm /var/mail/user1|
 |call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|! test -f /var/mail/user1|
+
+Liste verwalten:
+|call script|mlist info liste > info.out|
+|call script|grep "Only list members" info.out|
+|call script|mlist get liste > get.out|
+|call script|grep "user1" get.out|
+|call script|mlist list > list.out|
+|call script|grep "liste" list.out|
+
 
 Feature ausschalten
 |call script|sudo mmail disable mlist|

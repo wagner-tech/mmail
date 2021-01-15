@@ -73,8 +73,12 @@ sub get_permit_type {
 	my $list = shift;
 	die "invalid list name: $list" until (-f "$USER_DIR/$list.mlist");
 	
-	return "$list.permit" if (-f "$USER_DIR/$list.permit");
-	return "list" if (-e "$USER_DIR/$list.permit");
+	if (-l "$USER_DIR/$list.permit") {
+		# list or permit
+		my $permit = readlink "$USER_DIR/$list.permit";
+		return "list" if ($permit eq "$USER_DIR/$list.mlist");
+		return $permit;
+	}
 	return "all";
 }
 sub list {
@@ -107,8 +111,9 @@ sub info {
 	my $permit_type = get_permit_type($list);
 	return ($list_loc, $permit_type) if ($permit_type eq 'list' or $permit_type eq 'all');
 	
-	open (RD, $permit_type);
+	open (RD, $permit_type) or die "cannot open $permit_type";
 	my @addresses = <RD>;
+	chomp (@addresses);
 	return ($list_loc, $permit_type, @addresses);
 }
 sub get {

@@ -1,3 +1,7 @@
+mmail (1.0) unstable; urgency=medium
+  * mlist command. includes announce-mlist, update-mlist
+ -- Michael Wagner <michael@wagnertech.de>  Fri, 15 Jan 2021 20:03:04 +0100
+
 mmail (0.4) unstable; urgency=medium
   * footer for mlist
   * mlist size limitation

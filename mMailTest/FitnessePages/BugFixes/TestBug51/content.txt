@@ -6,7 +6,7 @@ mlist einschalten
 |call script|sudo mmail enable mlist|
 
 Liste definieren, an die nur die Listenteilnehmer senden dürfen, also auch USER1
-|call script|announce-mlist etc/liste.mlist list|
+|call script|mlist announce etc/liste.mlist list|
 
 Mail an Liste schicken
 |call script|!-sudo rm /var/mail/user1 || true-!|

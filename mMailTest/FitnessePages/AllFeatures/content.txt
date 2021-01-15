@@ -12,7 +12,7 @@ Alle Features einschalten
 |call script|sleep 2|
 
 Liste definieren
-|call script|announce-mlist etc/liste.mlist all|
+|call script|mlist announce etc/liste.mlist all|
 
 Normale Mail an Verteiler kommt durch:
 |call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
