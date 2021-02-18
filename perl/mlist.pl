@@ -10,9 +10,9 @@ die $usage if ($#ARGV < 0);
 my $command = shift;
 
 # check installation
-my $rc = system("mmail list >/dev/null");
+my $rc = system('export PATH="/usr/sbin/:$PATH"; mmail list >/dev/null');
 die "mlist service not properly installed. See 'mmail list'." unless $rc eq 0;
-my $mlist_status = `mmail list |grep mlist`;
+my $mlist_status = `export PATH="/usr/sbin/:\$PATH"; mmail list |grep mlist`;
 chomp $mlist_status;
 die "mlist service not activated. See 'man mlist'." unless substr($mlist_status, -1) eq 1;
 
