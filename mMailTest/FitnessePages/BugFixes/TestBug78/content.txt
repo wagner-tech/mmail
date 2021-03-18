@@ -1,0 +1,16 @@
+Fehlermeldung:
+mlist check scheitert auf vindelicia.de
+error: myhostname differs from filtername: mail.vindelicia.de / vindelicia.de
+
+!|test.util.CallScript|
+|call script|sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig|
+|call script|sudo cp etc/main.cf.78 /etc/postfix/main.cf|
+|call script|sudo cp /etc/postfix/mmail/mlist.contfilt.regexp /etc/postfix/mmail/mlist.contfilt.regexp.orig|
+|call script|sudo cp etc/mlist.contfilt.regexp.78 /etc/postfix/mmail/mlist.contfilt.regexp|
+|call script|sudo systemctl reload postfix|
+|call script|sudo mmail enable mlist|
+|call script|sudo mmail list|
+|call script|sudo mmail disable mlist|
+|call script|sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf|
+|call script|sudo cp /etc/postfix/mmail/mlist.contfilt.regexp.orig /etc/postfix/mmail/mlist.contfilt.regexp|
+|call script|sudo systemctl reload postfix|
