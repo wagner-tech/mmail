@@ -9,7 +9,7 @@ KillMode=process
 RestartPreventExitStatus=255
 Type=simple
 
-#[Install]
-#WantedBy=multi-user.target
-#Alias=sshd.service
+[Install]
+WantedBy=multi-user.target
+
 
