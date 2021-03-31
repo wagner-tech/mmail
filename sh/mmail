@@ -45,29 +45,6 @@ check_features() {
 			exit 1
 		fi
 		
-		# checks for host names
-		hostname=$(hostname)
-		myhostname=$(postconf -h myhostname)
-		filtername=$(grep FILTER /etc/postfix/mmail/mlist.contfilt.regexp |sed 's!/.*@\(.*\)/.*!\1!')
-		mydestination=$(postconf -h mydestination)
-		if [ "$hostname" != "$myhostname" ]
-		then
-			echo "warning: hostname vs myhostname: $hostname / $myhostname"
-		fi
-		# search filtername in mydestination
-		found=0
-		for dest in $mydestination
-		do
-			if [ "$dest" != "$filtername" ]
-			then
-				found=1
-			fi
-		done
-		if [ $found == 0 ]
-		then
-			echo "filtername not in mydestination: $filtername / $mydestination"
-			exit 3
-		fi
 		if ! $sctl status mlistd 1>/dev/null
 		then
 			echo "error: mlist installed, but mlistd not running"

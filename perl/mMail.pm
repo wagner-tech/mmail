@@ -13,12 +13,11 @@ sub announce {
 	my ($list, $perm) = @_;
 
 	# check list name
-	die "list name must end with .mlist" unless $list =~ /.*\.mlist/;
 	die "list '$list' not existing" unless -f $list;
 	
 	# check permission
 	if ($perm eq "all" || $perm eq "list") {
-		; # everythinf fine 
+		; # everything fine 
 	}
 	elsif (-f $perm) {
 		if (substr($perm,0,1) eq "/") {

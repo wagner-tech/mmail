@@ -4,16 +4,6 @@ set -e
 # check system
 sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
 
-# stop postfix
-$sctl stop postfix
-
-# create further postfix instances
-#postmulti -e init
-#if ! test -d /etc/postfix/free_pass
-#then
-#	postmulti -e create -I postfix-free_pass config_directory=/etc/postfix/free_pass
-#fi
-
 # create content filter
 pushd /etc/postfix/mmail >/dev/null
 	if [ ! -f mlist.contfilt.regexp ]
@@ -22,20 +12,6 @@ pushd /etc/postfix/mmail >/dev/null
 	fi
 popd >/dev/null
 
-# check, if mmail.contfilt.regexp is in main.cf
-#if ! grep "mmail.contfilt.regexp" /etc/postfix/main.cf >/dev/null
-#then
-#	postconf smtpd_recipient_restrictions="check_recipient_access regexp:/etc/postfix/mmail/mmail.contfilt.regexp $(postconf -h smtpd_recipient_restrictions)"
-#fi
-
-# check existence of mmail user
-#if ! grep mmail /etc/passwd >/dev/null
-#then
-#	adduser --quiet --disabled-login --gecos mmail mmail
-#fi
-
-#chown -R mmail:mmail /home/mmail
-
 # start postfix
-$sctl start postfix || true
+$sctl restart postfix || true
 

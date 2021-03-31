@@ -11,7 +11,7 @@ use strict;
 our $PATH = "/var/mmail";
 our $FREEPASS = "127.0.0.1:10025";
 our $TEXTFOOTER = "\n\n---\nmlist service provided by WagnerTech UG (www.wagnertech.de)\n";
-our $HTMLFOOTER = '<hl><p>mlist service provided by <a href="http://wagnertech.de">WagnerTech UG</a></p>'."\n";
+our $HTMLFOOTER = '<hr><p>mlist service provided by <a href="http://wagnertech.de">WagnerTech UG</a></p>'."\n";
 our $MAXMAILSIZE = 1000000;
 our $SERVICE_SENDER = 'do-not-reply@wagnertech.de';
 

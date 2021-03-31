@@ -18,6 +18,7 @@ sub process_request {
 		my $list = $list_path;
 		$list =~ s/.*\///;
 	
+		# append list name to /etc/aliases
 		# TODO: ggf auf perl-File-Funktionen umstellen
 		my $rc = system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
 		return "$rc,grep -v failed" unless $rc == 0;
@@ -25,6 +26,16 @@ sub process_request {
 		return "$rc,mv failed" unless $rc == 0;
 		$rc = system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
 		return "$rc,append failed" unless $rc == 0;
+		
+		# append list name to /etc/postfix/mmail/mlist.contfilt.regexp
+		open CONTFILT, "/etc/postfix/mmail/mlist.contfilt.regexp";
+		my @contfilt = <CONTFILT>;
+		close CONTFILT;
+		if (! grep (/$list@/, @contfilt)) {
+			open CONTFILT, ">>/etc/postfix/mmail/mlist.contfilt.regexp";
+			print CONTFILT "/$list@/ FILTER mlist_check:[127.0.0.1]";
+			close CONTFILT;
+		}
 	
 		$rc = system("ln -sf $list_path $USER_DIR/$list" );
 		return "$rc,link failed" unless $rc == 0;
