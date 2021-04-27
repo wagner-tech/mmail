@@ -5,6 +5,8 @@ use Net::SMTP;
 use Email::Simple;
 use Email::MIME;
 
+use mMail;
+
 use strict;
 
 # define configuration
@@ -32,8 +34,8 @@ sub send_list
 	$list =~ s/^<//;
 	
 	my $body = "\n\n$list has following members: \n\n";
-	open FILE, "<", "$PATH/$list";
-	$body .= $_ while (<FILE>);
+	my @members = mMail::get($list);
+	$body .= join("\n", @members);
 
 	my $email = Email::Simple->create(
 	header => [
@@ -70,8 +72,8 @@ sub sender_is_permitted
 	$list =~ s/@.*//;
 	$list =~ s/^<//;
 	
-	my $file = "$PATH/$list";
-	$file =~ s/mlist$/permit/;
+	my $file = "$PATH/$list.permit";
+	#$file =~ s/mlist$/permit/;
 	
 	
 	# no file means: list access open for everyone

@@ -17,15 +17,17 @@ sub process_request {
 		$list_dir =~ s/[^\/]*$//;
 		my $list = $list_path;
 		$list =~ s/.*\///;
-	
+		
 		# append list name to /etc/aliases
-		# TODO: ggf auf perl-File-Funktionen umstellen
-		my $rc = system("grep -v \"^$list\" /etc/aliases > /tmp/aliases");
-		return "$rc,grep -v failed" unless $rc == 0;
-		$rc = system("mv /tmp/aliases /etc/aliases");
-		return "$rc,mv failed" unless $rc == 0;
-		$rc = system("echo \"$list: :include:$USER_DIR/$list\" >> /etc/aliases" );
-		return "$rc,append failed" unless $rc == 0;
+		open my $handle, '<', "/etc/aliases";
+		chomp(my @aliases = <$handle>);
+		close $handle;
+		unless (grep(/$list/, @aliases)) {
+			push (@aliases, "$list: :include:$USER_DIR/$list.mlist");
+			open $handle, '>', "/etc/aliases";
+			print $handle join("\n", @aliases);
+			close $handle;
+		}
 		
 		# append list name to /etc/postfix/mmail/mlist.contfilt.regexp
 		open CONTFILT, "/etc/postfix/mmail/mlist.contfilt.regexp";
@@ -37,16 +39,16 @@ sub process_request {
 			close CONTFILT;
 		}
 	
-		$rc = system("ln -sf $list_path $USER_DIR/$list" );
+		my $rc = system("ln -sf $list_path $USER_DIR/$list.mlist" );
 		return "$rc,link failed" unless $rc == 0;
 	
-		my $perm_path = "$USER_DIR/$list";
-		$perm_path =~ s/mlist$/permit/;
+		my $perm_path = "$USER_DIR/$list.permit";
+		#$perm_path =~ s/mlist$/permit/;
 		unlink $perm_path if (-l $perm_path);
 		if ($perm eq "all") {
 			; # do nothing
 		} elsif ($perm eq "list") {
-			$rc = system("ln -s $USER_DIR/$list $perm_path");
+			$rc = system("ln -s $USER_DIR/$list.mlist $perm_path");
 			return "$rc,link list to perm failed" unless $rc == 0;
 		} else {
 			$rc = system("ln -s $perm $perm_path");

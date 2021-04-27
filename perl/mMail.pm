@@ -84,10 +84,10 @@ sub list {
 	# result is an array of lists. Each element has an enty for 'name' and 'permit'
 	opendir(VZ, $USER_DIR);
 	my @files = readdir(VZ);
-	my @lists = grep(/.*mlist/, @files);
+	my @lists = grep(/.*\.mlist$/, @files);
 	my @result;
 	foreach my $list (@lists) {
-		$list =~ s/.mlist//;
+		$list =~ s/\.mlist$//;
 		my $permit_type = get_permit_type($list);
 		push(@result, {'name' => $list, 'permit' => "$permit_type"});
 	}

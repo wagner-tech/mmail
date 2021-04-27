@@ -39,7 +39,7 @@ check_features() {
 		else
 			echo "mlist installation mismatch: smtpd_recipient_restrictions existing, but not mlist_check/unix in master.cf"
 			echo "To fix this run:"
-			echo "sudo postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl ${sender} ${recipient}'"
+			echo "sudo postconf -Me mlist_check/unix='mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl \${sender} \${recipient}'"
 			echo "or on old systems:"
 			echo "cp /etc/postfix/master.cf xxx; echo 'mlist_check unix - n  n - - pipe flags= user=nobody argv=/usr/local/bin/mlist_check.pl  ' >> xxx; sudo mv xxx /etc/postfix/master.cf"
 			exit 1

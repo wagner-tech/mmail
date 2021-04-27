@@ -28,28 +28,29 @@ mlist hängt footer dran
 |call script|sudo grep "user1" /var/mail/$USER|
 
 Liste definieren, an die nur die Listenteilnehmer senden dürfen, der Tester also nicht (neuer Stil)
-|call script|mlist announce etc/liste.mlist list|
+|call script|cp etc/liste.mlist liste_mlist|
+|call script|mlist announce liste_mlist list|
 
 Mail an Liste schicken
 |call script|sudo rm /var/mail/user1|
-|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste_mlist@$HOSTNAME < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|! test -f /var/mail/user1|
 
 Liste verwalten:
-|call script|mlist info liste > info.out|
+|call script|mlist info liste_mlist > info.out|
 |call script|grep "Only list members" info.out|
-|call script|mlist get liste > get.out|
+|call script|mlist get liste_mlist > get.out|
 |call script|grep "user1" get.out|
 |call script|mlist list > list.out|
-|call script|grep "liste" list.out|
+|call script|grep "liste_mlist" list.out|
 
 
 Feature ausschalten
 |call script|sudo mmail disable mlist|
 
 Mail an Liste schicken (ohne Absender-Check)
-|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|bin/smtp.pl liste_mlist@$HOSTNAME < etc/MailAnhang.txt|
 |call script|sleep 3|
 |call script|sudo grep "neue Liste" /var/mail/user1|
 
