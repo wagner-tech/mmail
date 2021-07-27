@@ -70,7 +70,7 @@ sub update {
 }
 sub get_permit_type {
 	my $list = shift;
-	die "invalid list name: $list" until (-f "$USER_DIR/$list.mlist");
+	return "LIST_ERROR" until (-f "$USER_DIR/$list.mlist");
 	
 	if (-l "$USER_DIR/$list.permit") {
 		# list or permit
@@ -79,6 +79,11 @@ sub get_permit_type {
 		return $permit;
 	}
 	return "all";
+}
+sub require_permit_type {
+	my $permit_type = get_permit_type(shift);
+	die "invalid list name: $list" if ($permit_type eq "LIST_ERROR");
+	return $permit_type;
 }
 sub list {
 	# result is an array of lists. Each element has an enty for 'name' and 'permit'
@@ -107,7 +112,7 @@ sub info {
 	# read list location
 	my $list_loc = readlink "$USER_DIR/$list.mlist";
 	
-	my $permit_type = get_permit_type($list);
+	my $permit_type = require_permit_type($list);
 	return ($list_loc, $permit_type) if ($permit_type eq 'list' or $permit_type eq 'all');
 	
 	open (RD, $permit_type) or die "cannot open $permit_type";

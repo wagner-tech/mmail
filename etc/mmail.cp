@@ -63,5 +63,4 @@ cp src/mmail/perl/mlist_check.cf $base/etc/
 cp src/mmail/perl/mlistd.pl $base/usr/sbin/mlistd
 mkdir -p $base/var/mmail
 
-~/aasync/Aktuell/create-conffiles $base
 
