@@ -3,7 +3,7 @@ use strict;
 
 use mMail;
 
-my $usage = "$0 COMMAND [<list-name> <permission>]\n COMMAND: list announce update info get delete\n <permission>: all|list|<.perm>";
+my $usage = "$0 COMMAND [<list-name> <permission>]\n COMMAND: list announce update info get config delete\n <permission>: all|list|<.perm>";
 
 # check command line
 die $usage if ($#ARGV < 0);
@@ -57,6 +57,11 @@ elsif ($command eq "delete") {
 	my $ret = mMail::delete(@ARGV);
 	die "Deletion failed: $ret" unless $ret == 0;
 	print ("List deleted.\n");
+}
+elsif ($command eq "config") {
+	my $ret = mMail::config(@ARGV);
+	die "Configuration failed: $ret" unless $ret == 0;
+	print ("Configuration updated.\n");
 }
 else {
 	die "unnown command: $command";

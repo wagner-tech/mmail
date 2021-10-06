@@ -7,6 +7,15 @@ use Cwd qw();
 our $SOCK_PATH = "/var/run/mlist.sock";
 our $USER_DIR = "/var/mmail";
 
+sub list_base_name {
+	my $list = shift;
+
+	$list =~ s/@.*//;
+	$list =~ s/\.mlist$//;
+	$list =~ s/^<//;
+	
+	return $list;
+}
 sub announce {
 	
 	die "Parameter missing: mlist annouce LIST PERM" if $#_ < 1; 
@@ -131,6 +140,36 @@ sub get {
 	my @members = <FILE>;
 	chomp @members;
 	return @members;	
+}
+sub config {
+	# parameter: list name, list of configuration entries
+	die "Paramerter missing: mlist config LIST CONFIGS" if $#_ < 1;
+	my $list = shift;
+	$list =~ s/\.mlist$//;
+	die "invalid list name: $list" until (-f "$USER_DIR/$list.mlist");
+
+	my $client = IO::Socket::UNIX->new(
+		Type => SOCK_STREAM,
+		Peer => $SOCK_PATH,
+	);
+	
+	die "Can't create socket: $!" unless $client;
+
+	my $ans;
+	while (my $config = shift) {
+		if ($config =~ /=/) {
+			# set value
+			my @confarr = split("=", $config);
+			$client->send("C,$list,$confarr[0],$confarr[1]\n");
+		}
+		else {
+			# reset value
+			$client->send("C,$list,$config\n");
+		}
+		chomp ($ans = <$client>);
+		return $ans if ($ans != 0);
+	}
+	return $ans;
 }
 sub delete {
 	# parameter: name of list

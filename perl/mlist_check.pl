@@ -13,9 +13,15 @@ use strict;
 our $PATH = "/var/mmail";
 our $FREEPASS = "127.0.0.1:10025";
 our $TEXTFOOTER = "\n\n---\nmlist service provided by WagnerTech UG (www.wagnertech.de)\n";
-our $HTMLFOOTER = '<hr><p>mlist service provided by <a href="http://wagnertech.de">WagnerTech UG</a></p>'."\n";
+our $HTMLFOOTER = '<hl><p>mlist service provided by <a href="http://wagnertech.de">WagnerTech UG</a></p>'."\n";
 our $MAXMAILSIZE = 1000000;
 our $SERVICE_SENDER = 'do-not-reply@wagnertech.de';
+
+# define individual list configuration
+our $SENDER = ""; # envelope data
+our $SUBJECT_PREFIX = "";
+our $FROM = "";
+our $REPLY_TO = "";
 
 require "/etc/mlist_check.cf";
 
@@ -67,14 +73,10 @@ sub sender_is_permitted
 	my $address = shift;
 
 	$sender =~ s/^<//;	
-	$sender =~ s/>$//;	
-	my $list = $address;
-	$list =~ s/@.*//;
-	$list =~ s/^<//;
+	$sender =~ s/>$//;
+	my $list = mMail::list_base_name($address);
 	
 	my $file = "$PATH/$list.permit";
-	#$file =~ s/mlist$/permit/;
-	
 	
 	# no file means: list access open for everyone
 	unless (-l $file) {
@@ -89,6 +91,69 @@ sub sender_is_permitted
 		}
 	}
 	return 0;
+}
+
+sub process_mail {
+	my $sender = shift;
+	my $to = shift;
+	my $mobj = shift;
+
+	# check config data for this mail
+	my $list = mMail::list_base_name($to);
+	my $file = "$PATH/$list.config";
+	
+	if (-f $file) {
+		require "$file";
+		if (length $REPLY_TO) {
+			if ($REPLY_TO eq "SENDER") {
+				$mobj->header_str_set("Reply-To" => $sender);
+			}
+			elsif ($REPLY_TO eq "FROM") {
+				$mobj->header_str_set("Reply-To" => $mobj->header("From"));
+			}
+			else {
+				$mobj->header_str_set("Reply-To" => $REPLY_TO);
+			}
+		}
+		$sender = $SENDER if (length $SENDER);
+		$mobj->header_str_set("Subject" => "$SUBJECT_PREFIX ".$mobj->header("Subject")) if (length $SUBJECT_PREFIX);
+		$mobj->header_str_set("From" => $FROM) if (length $FROM);
+	}
+	
+	# check test footer
+	if (length $TEXTFOOTER) {
+		$mobj->walk_parts(sub {
+		    my ($part) = @_;
+		    return if $part->subparts; # multipart
+		 
+		 	my $ct = $part->content_type;
+		    if ( $ct =~ m[text/plain]i and ! ($ct =~ m[name=]i)) {
+		        my $body = $part->body;
+		        $body .= $TEXTFOOTER;
+		        $part->body_set( $body );
+		    }
+		    elsif ( $ct =~ m[text/html]i ) {
+		        my $body = $part->body;
+		    	$body =~ s!</body>!$HTMLFOOTER</body>!;
+		        $part->body_set( $body );
+		    }
+		});
+	}
+	my $raw = $mobj->as_string;
+	
+	# forward mail
+	my $smtp = Net::SMTP->new("$FREEPASS");
+	$smtp->mail($sender);
+	$smtp->recipient($to);
+	$smtp->data();
+	$smtp->datasend("$raw");
+	$smtp->dataend();
+	my $code=$smtp->code();
+	if ($code != 250) {
+		my $response=$smtp->message();
+		die($response);
+	}
+	$smtp->quit;
 }
 
 # Read e-mail from stdin
@@ -114,39 +179,9 @@ if ($mobj->header("Subject") eq "GET") {
 	exit send_list($sender, @to_addrs);
 }
 
-if (length $TEXTFOOTER) {
-	$mobj->walk_parts(sub {
-	    my ($part) = @_;
-	    return if $part->subparts; # multipart
-	 
-	 	my $ct = $part->content_type;
-	    if ( $ct =~ m[text/plain]i and ! ($ct =~ m[name=]i)) {
-	        my $body = $part->body;
-	        $body .= $TEXTFOOTER;
-	        $part->body_set( $body );
-	    }
-	    elsif ( $ct =~ m[text/html]i ) {
-	        my $body = $part->body;
-	    	$body =~ s!</body>!$HTMLFOOTER</body>!;
-	        $part->body_set( $body );
-	    }
-	});
-	$raw = $mobj->as_string;
+foreach my $to (@to_addrs) {
+	process_mail($sender, $to, $mobj);
 }
-
-# forward mail
-my $smtp = Net::SMTP->new("$FREEPASS");
-$smtp->mail($sender);
-$smtp->recipient(@to_addrs);
-$smtp->data();
-$smtp->datasend("$raw");
-$smtp->dataend();
-my $code=$smtp->code();
-if ($code != 250) {
-	my $response=$smtp->message();
-	die($response);
-}
-$smtp->quit;
 
 exit 0;
 

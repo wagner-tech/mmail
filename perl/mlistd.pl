@@ -8,26 +8,29 @@ our $SOCK_PATH = "/var/run/mlist.sock";
 our $USER_DIR = "/var/mmail";
 
 sub process_request {
-	my ($cmd,$list_path,$perm) = split(/,/,shift);
+	my @params = split(/,/,shift);
+	my $cmd = shift(@params);
 	
 	if ($cmd eq "A") {
+		my ($list_path,$perm) = @params; 
 
 		# parse list_path
 		my $list_dir = $list_path;
 		$list_dir =~ s/[^\/]*$//;
 		my $list = $list_path;
 		$list =~ s/.*\///;
+		$list =~ s/\.mlist$//;
 		
 		# append list name to /etc/aliases
 		open my $handle, '<', "/etc/aliases";
 		chomp(my @aliases = <$handle>);
 		close $handle;
-		unless (grep(/$list/, @aliases)) {
-			push (@aliases, "$list: :include:$USER_DIR/$list.mlist");
-			open $handle, '>', "/etc/aliases";
-			print $handle join("\n", @aliases);
-			close $handle;
-		}
+		@aliases = grep(!/$list(:|\.mlist)/, @aliases);
+		push (@aliases, "$list: :include:$USER_DIR/$list.mlist");
+		push (@aliases, "$list.mlist: :include:$USER_DIR/$list.mlist");
+		open $handle, '>', "/etc/aliases";
+		print $handle join("\n", @aliases);
+		close $handle;
 		
 		# append list name to /etc/postfix/mmail/mlist.contfilt.regexp
 		open CONTFILT, "/etc/postfix/mmail/mlist.contfilt.regexp";
@@ -57,13 +60,29 @@ sub process_request {
 	}
 	elsif ($cmd eq "D") {
 		# delete request
-
-		# get list name
-		my $list = $list_path;
-		$list =~ s/.*\///;
-		$list =~ s/.mlist$//;
-		
+		my $list = shift(@params);
 		unlink glob "$USER_DIR/$list.*";
+	}
+	elsif ($cmd eq "C") {
+		# change list configuration
+		my ($list,$name,$value) = @params;
+
+		my $file = "$USER_DIR/$list.config";
+		my @configs;
+		my $handle;
+		if (-f $file) {
+			# config file exists
+			open $handle, '<', $file;
+			chomp(@configs = <$handle>);
+			close $handle;
+			
+			# remove existing config
+			@configs = grep(!/$name/,@configs);
+		}
+		push(@configs, "\$$name = '$value';") if (length $value);
+		open $handle, '>', "$file";
+		print $handle join("\n", @configs);
+		close $handle;
 	}
 	else {
 		return "1,unknown command: $cmd";
