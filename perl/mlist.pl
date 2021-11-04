@@ -54,12 +54,12 @@ elsif ($command eq "get") {
 	print $out;
 }
 elsif ($command eq "delete") {
-	my $ret = mMail::delete(@ARGV);
+	$ret = mMail::delete(@ARGV);
 	die "Deletion failed: $ret" unless $ret == 0;
 	print ("List deleted.\n");
 }
 elsif ($command eq "config") {
-	my $ret = mMail::config(@ARGV);
+	$ret = mMail::config(@ARGV);
 	die "Configuration failed: $ret" unless $ret == 0;
 	print ("Configuration updated.\n");
 }

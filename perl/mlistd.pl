@@ -111,14 +111,15 @@ die "Can't create socket: $!" unless $server;
 while (1)
 {
 	if (my $conn = $server->accept()) {
-		chomp (my $line = <$conn>);
-		my $ret = 0;
-	
-		$ret = process_request($line) unless ($line eq "U");
-		if ($ret == 0) {
-			# update list
-			$ret = system("newaliases");
+		while(chomp (my $line = <$conn>)) {
+			my $ret = 0;
+		
+			$ret = process_request($line) unless ($line eq "U");
+			if ($ret == 0) {
+				# update list
+				$ret = system("newaliases");
+			}
+			print $conn "$ret\n";
 		}
-		print $conn "$ret\n";
 	}
 }

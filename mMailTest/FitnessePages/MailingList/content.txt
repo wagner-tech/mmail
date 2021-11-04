@@ -45,6 +45,12 @@ Liste verwalten:
 |call script|mlist list > list.out|
 |call script|grep "liste_mlist" list.out|
 
+Liste konfigurieren:
+|call script|mlist config liste FROM=beethoven@bonn.de REPLY_TO=SENDER|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|sudo grep "From: beethoven@bonn.de" /var/mail/user1|
+|call script|sudo grep "Reply-To: $USER@$HOSTNAME" /var/mail/user1|
 
 Feature ausschalten
 |call script|sudo mmail disable mlist|

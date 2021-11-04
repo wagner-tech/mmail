@@ -1,11 +1,11 @@
-.\" Manpage for announce-mlist.
+.\" Manpage for mlist.
 .\" Contact mail@wagnertech.de to correct errors or typos.
-.TH man 1 "10 Dec 2020" "1.0" "announce-mlist man page"
+.TH mlist 1 "04 Nov 2021" "1.1" "mlist man page"
 .SH NAME
 mlist \- CLI to mMails mailing list functionality
 .SH SYNOPSIS
 .B mlist
-COMMAND [LIST PERMISSION]
+COMMAND [LIST PERMISSION CONFIG]
 .SH DESCRIPTION
 .TP
 Remark:
@@ -32,6 +32,19 @@ check mlist installation and print a list of all mailing lists.
 \fBupdate\fR
 If the content of the file LIST is updated, this has to be finished by calling 'mlist update'.
 For any other changes re-announce the list.
+.TP
+\fBconfig LIST CONFIG\fR
+Set config parameters to LIST. To set a value use PARAM=VALUE format. To unset a configuration just supply the
+paramter name. Available config parameters are:
+
+\fBSENDER:\fR Set envelope sender.
+
+\fBSUBJECT_PREFIX:\fR Add this string to the subject of the mail.
+
+\fBFROM:\fR Set mail header From value.
+
+\fBREPLY_TO:\fR Set mail header Reply-To value. For this parameter the following spacial values are allowed:
+\fBSENDER:\fR sets Reply-To to the original envelope sender. \fBFROM:\fR sets Reply-To to the original header From.
 
 .PP
 Parameters:
@@ -48,8 +61,13 @@ all|list|PERMFILE
 
 \fBPERMFILE:\fR file name of a list of email addresses that are permitted to use the mailling list
 
+.TP
+\fBCONFIG\fR
+To set a value use PARAM=VALUE format. To unset a configuration just supply the
+paramter name.
+
 .SH SEE ALSO
-mmail(8), update-mlist(1)
+mmail(8)
 .SH FILES
 The LIST or PERMFILE file contains email addresses line by line. There are two possible formats:
 

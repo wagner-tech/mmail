@@ -1,5 +1,7 @@
 package mMail;
 
+use strict;
+
 use IO::Socket::UNIX;
 use Cwd qw();
 
@@ -90,7 +92,8 @@ sub get_permit_type {
 	return "all";
 }
 sub require_permit_type {
-	my $permit_type = get_permit_type(shift);
+	my $list = shift;
+	my $permit_type = get_permit_type($list);
 	die "invalid list name: $list" if ($permit_type eq "LIST_ERROR");
 	return $permit_type;
 }
@@ -156,10 +159,12 @@ sub config {
 	die "Can't create socket: $!" unless $client;
 
 	my $ans;
+	my @valid_configs = qw(SENDER SUBJECT_PREFIX FROM REPLY_TO);
 	while (my $config = shift) {
 		if ($config =~ /=/) {
 			# set value
 			my @confarr = split("=", $config);
+			die "Invalid config entry: $confarr[0]" unless grep(/$confarr[0]/, @valid_configs);
 			$client->send("C,$list,$confarr[0],$confarr[1]\n");
 		}
 		else {
@@ -167,7 +172,7 @@ sub config {
 			$client->send("C,$list,$config\n");
 		}
 		chomp ($ans = <$client>);
-		return $ans if ($ans != 0);
+		return $ans unless ($ans == 0);
 	}
 	return $ans;
 }
