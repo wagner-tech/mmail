@@ -39,9 +39,6 @@ make
 make deb
 ```
 ## Versions
-0.1: mmail-vt
 
-0.2: mlist
-
-0.3: correct mlist processing for strange STRATO forwarded adresses
+see doc/mmail.changelog
 
