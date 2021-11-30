@@ -80,6 +80,7 @@ sub process_request {
 			@configs = grep(!/$name/,@configs);
 		}
 		push(@configs, "\$$name = '$value';") if (length $value);
+		push(@configs, "1;") if (scalar @configs == 0); 
 		open $handle, '>', "$file";
 		print $handle join("\n", @configs);
 		close $handle;

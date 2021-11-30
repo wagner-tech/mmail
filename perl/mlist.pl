@@ -31,8 +31,7 @@ elsif ($command eq "update") {
 	$ret = mMail::update();
 }
 elsif ($command eq "info") {
-	my ($list_loc, @permit) = mMail::info(@ARGV);
-	my $permit_type = shift(@permit);
+	my ($list_loc, $permit_type, $permit, $config) = mMail::info(@ARGV);
 	print ("List is on location: $list_loc\n");
 	print ("List has permission:\n");
 	if ($permit_type eq "all") {
@@ -43,8 +42,14 @@ elsif ($command eq "info") {
 	}
 	else {
 		print ("  Restricted list access: List can be used by:\n");
-		my $out = join("\n", @permit);
-		print $out;
+		my $out = join("\n", @$permit);
+		print "$out\n";
+	}
+	if (scalar @$config > 0) {
+		# there is a list configuration
+		print ("List configuration:\n");
+		my $out = join("\n", @$config);
+		print "$out\n";
 	}
 }
 elsif ($command eq "get") {

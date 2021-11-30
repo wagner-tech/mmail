@@ -15,3 +15,9 @@ popd >/dev/null
 # start postfix
 $sctl restart postfix || true
 
+# restart mlistd, if running
+if $sctl status mlistd
+then
+	$sctl restart mlistd
+fi
+

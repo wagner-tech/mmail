@@ -115,7 +115,8 @@ sub info {
 	# result is an array:
 	#   - list location
 	#   - permission type
-	#   - list of emails, if type != all,list
+	#   - list ref of emails, if type != all,list
+	#   - list ref of configuration
 	
 	die "Paramerter missing: mlist info LIST" if $#_ < 0; 
 	my $list = shift;
@@ -125,12 +126,30 @@ sub info {
 	my $list_loc = readlink "$USER_DIR/$list.mlist";
 	
 	my $permit_type = require_permit_type($list);
-	return ($list_loc, $permit_type) if ($permit_type eq 'list' or $permit_type eq 'all');
+	my @addresses;
+	if ($permit_type eq 'list' or $permit_type eq 'all') {
+		# do nothing
+		;
+	}
+	else {
+		# read permit file
+		open (RD, $permit_type) or die "cannot open $permit_type";
+		@addresses = <RD>;
+		chomp (@addresses);
+		close (RD);
+	}
 	
-	open (RD, $permit_type) or die "cannot open $permit_type";
-	my @addresses = <RD>;
-	chomp (@addresses);
-	return ($list_loc, $permit_type, @addresses);
+	my @config;
+	if (-f "$USER_DIR/$list.config") {
+		# add configuration to info
+		open (RD, "$USER_DIR/$list.config") or die "cannot open $USER_DIR/$list.config";
+		@config = <RD>;
+		chomp (@config);
+		@config = grep(!/^1;/,@config);
+		close (RD);
+		
+	}
+	return ($list_loc, $permit_type, \@addresses, \@config);
 }
 sub get {
 	# parameter: name of list
