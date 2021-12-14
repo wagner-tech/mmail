@@ -33,11 +33,11 @@ sub log {
 sub send_list
 {
 	my $sender = shift;
+	my $address = shift;
+
 	die("5.5.4: GET is only allowed with one To: address") if (scalar @_ > 1);
 	
-	my $list = shift;
-	$list =~ s/@.*//;
-	$list =~ s/^<//;
+	my $list = mMail::list_base_name($address);
 	
 	my $body = "\n\n$list has following members: \n\n";
 	my @members = mMail::get($list);

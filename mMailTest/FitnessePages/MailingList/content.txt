@@ -24,7 +24,7 @@ mlist hängt footer dran
 Über GET Liste abfragen
 |call script|if [ -f /var/mail/$USER ]; then sudo rm /var/mail/$USER; fi|
 |call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailGet.txt|
-|call script|sleep 3|
+|call script|sleep 4|
 |call script|sudo grep "user1" /var/mail/$USER|
 
 Liste definieren, an die nur die Listenteilnehmer senden dürfen, der Tester also nicht (neuer Stil)
