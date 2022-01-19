@@ -180,6 +180,7 @@ if ($mobj->header("Subject") eq "GET") {
 }
 
 foreach my $to (@to_addrs) {
+	$mobj = Email::MIME->new($raw);
 	process_mail($sender, $to, $mobj);
 }
 

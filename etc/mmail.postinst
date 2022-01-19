@@ -15,6 +15,9 @@ popd >/dev/null
 # start postfix
 $sctl restart postfix || true
 
+# reload service (systemd)
+$sctl deamon-reload
+
 # restart mlistd, if running
 if $sctl status mlistd
 then
