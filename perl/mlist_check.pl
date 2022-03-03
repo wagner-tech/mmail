@@ -161,7 +161,7 @@ my $raw;
 while (<STDIN>) {
 	$raw .= $_;
 }
-die("5.5.4: mail is bigger than $MAXMAILSIZE") if (length $raw > $MAXMAILSIZE);
+die("5.5.4: mail is bigger than $MAXMAILSIZE bytes!") if (length $raw > $MAXMAILSIZE);
 
 my $sender = shift;
 my @to_addrs = @ARGV;
@@ -169,8 +169,16 @@ my @to_addrs = @ARGV;
 # convert strange STRATO forward address
 $sender =~ s/.*=.*=.*=(.*)=(.*)@.*/$2\@$1/;
 
+my @not_permitted_lists;
 foreach my $to (@to_addrs) {
-	sender_is_permitted($sender, $to) || die("5.5.4: sender $sender not permitted to send to list $to");
+	if (! sender_is_permitted($sender, $to)) {
+		push(@not_permitted_lists, $to);
+	}
+}
+
+# remove not permitted lists
+foreach my $npl (@not_permitted_lists) {
+	@to_addrs = grep(!/$npl/, @to_addrs);
 }
 
 # examine mail with its mail parts
@@ -183,6 +191,8 @@ foreach my $to (@to_addrs) {
 	$mobj = Email::MIME->new($raw);
 	process_mail($sender, $to, $mobj);
 }
+
+die ("5.5.4: $sender not permitted to use these lists: ".join(@not_permitted_lists,',')) if (scalar(@not_permitted_lists) > 0);
 
 exit 0;
 

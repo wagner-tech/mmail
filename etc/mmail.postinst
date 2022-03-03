@@ -2,7 +2,7 @@
 set -e
 
 # check system
-sctl=$(which systemctl) || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
+sctl="$(which systemctl) --no-pager" || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
 
 # create content filter
 pushd /etc/postfix/mmail >/dev/null
@@ -16,7 +16,7 @@ popd >/dev/null
 $sctl restart postfix || true
 
 # reload service (systemd)
-$sctl deamon-reload
+$sctl daemon-reload
 
 # restart mlistd, if running
 if $sctl status mlistd
