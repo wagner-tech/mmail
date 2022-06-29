@@ -79,6 +79,13 @@ sub update {
 	chomp (my $ans = <$client>);
 	return $ans;
 }
+sub is_list {
+	# Parameter: list name or address
+	my $list = list_base_name(shift);
+	return 1 if (-f "$USER_DIR/$list.mlist");
+	return 0;
+	
+}
 sub get_permit_type {
 	my $list = shift;
 	return "LIST_ERROR" until (-f "$USER_DIR/$list.mlist");
