@@ -251,7 +251,7 @@ mlist)
 		;;
 	disable)
 		echo "Deinstalling mlist feature"
-		restr=$(postconf -h smtpd_recipient_restrictions |sed "s!check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp!!")
+		restr=$(postconf -h smtpd_recipient_restrictions |sed 's!check_recipient_access regexp:/etc/postfix/mmail/mlist.contfilt.regexp!!')
 		postconf smtpd_recipient_restrictions="$restr"
 		$sctl stop mlistd
 		$sctl disable mlistd
