@@ -222,4 +222,27 @@ sub delete {
 	
 	return $ans;
 }
+sub add_list_member {
+	# parameter: name of list
+	#            e-mail address
+	# return code: 0 = success
+
+	die "parameter_missing" if $#_ < 0; 
+	my $list  = shift;
+	my $email = shift;
+	die "invalid list name: $list" until (-f "$USER_DIR/$list.mlist");
+	die "invalid email format: $email" until ($email =~ /.*@.*\..*/);
+	
+	my $client = IO::Socket::UNIX->new(
+		Type => SOCK_STREAM,
+		Peer => $SOCK_PATH,
+	);
+	
+	die "Can't create socket: $!" unless $client;
+	
+	$client->send("V,$list,$email\n");
+	    
+	chomp (my $ans = <$client>);
+	return $ans;
+}	
 1;

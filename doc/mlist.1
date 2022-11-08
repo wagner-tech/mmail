@@ -13,9 +13,25 @@ To check if mlist service is properly installed, use \fB/usr/sbin/mmail list\fR.
 .PP
 mlist provides the following commands:
 .TP
+\fBadd LIST EMAIL\fR
+Add list member EMAIL to LIST.
+.TP
 \fBannounce LIST PERMISSION\fR
 announces a new mailling list. The list has to be provided as a file with name LIST. PERMISSION
 describes who is allowed to use the mailling list.
+.TP
+\fBconfig LIST CONFIG\fR
+Set config parameters to LIST. To set a value use PARAM=VALUE format. To unset a configuration just supply the
+paramter name. Available config parameters are:
+
+\fBSENDER:\fR Set envelope sender.
+
+\fBSUBJECT_PREFIX:\fR Add this string to the subject of the mail.
+
+\fBFROM:\fR Set mail header From value.
+
+\fBREPLY_TO:\fR Set mail header Reply-To value. For this parameter the following spacial values are allowed:
+\fBSENDER:\fR sets Reply-To to the original envelope sender. \fBFROM:\fR sets Reply-To to the original header From.
 .TP
 \fBdelete LIST\fR
 deletes list LIST. Only the system link is deleted, user data remains.
@@ -32,22 +48,12 @@ check mlist installation and print a list of all mailing lists.
 \fBupdate\fR
 If the content of the file LIST is updated, this has to be finished by calling 'mlist update'.
 For any other changes re-announce the list.
-.TP
-\fBconfig LIST CONFIG\fR
-Set config parameters to LIST. To set a value use PARAM=VALUE format. To unset a configuration just supply the
-paramter name. Available config parameters are:
-
-\fBSENDER:\fR Set envelope sender.
-
-\fBSUBJECT_PREFIX:\fR Add this string to the subject of the mail.
-
-\fBFROM:\fR Set mail header From value.
-
-\fBREPLY_TO:\fR Set mail header Reply-To value. For this parameter the following spacial values are allowed:
-\fBSENDER:\fR sets Reply-To to the original envelope sender. \fBFROM:\fR sets Reply-To to the original header From.
 
 .PP
 Parameters:
+.TP
+\fBEMAIL\fR
+valid email of new list user
 .TP
 \fBLIST\fR
 file name of the mailling list

@@ -68,6 +68,20 @@ elsif ($command eq "config") {
 	die "Configuration failed: $ret" unless $ret == 0;
 	print ("Configuration updated.\n");
 }
+elsif ($command eq "add") {
+	$ret = mMail::add_list_member(@ARGV);
+	die "List member add failed: $ret" if $ret > 1;
+	if ($ret == 0) {
+		print "List member added.\n";
+	}
+	elsif ($ret == 1) {
+		print "List member already in list.\n";
+		$ret = 0;
+	}
+	else {
+		die "unexpected rc: $ret";
+	}
+}
 else {
 	die "unnown command: $command";
 }
