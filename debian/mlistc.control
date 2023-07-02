@@ -1,0 +1,12 @@
+Source: mmail
+Section: main
+Priority: optional
+Maintainer: WagnerTech UG <mail@wagnertech.de>
+
+Package: mlistc
+Section: base
+Priority: optional
+Architecture: _DEB_HOST_ARCH
+Depends: mono-runtime, mdoc-tools
+Description: documentation utilities
+

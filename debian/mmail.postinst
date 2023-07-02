@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+# check system
+sctl="$(which systemctl) --no-pager" || sctl=$(which sysd2sysv) || (echo "install sysd2sysv"; exit 1)
+
+# create content filter
+pushd /etc/postfix/mmail >/dev/null
+	if [ ! -f mlist.contfilt.regexp ]
+	then
+		sed "s/_HOST_/$(postconf -h myhostname)/" mlist.contfilt.regexp.proto > mlist.contfilt.regexp
+	fi
+popd >/dev/null
+
+# start postfix
+$sctl restart postfix || true
+
+# reload service (systemd)
+$sctl daemon-reload
+
+# restart mlistd, if running
+if $sctl status mlistd
+then
+	$sctl restart mlistd
+fi
+

@@ -1,0 +1,4 @@
+mmail (0.1-%BUILD%) unstable; urgency=medium
+  * C# port for mmailc
+ -- Michael Wagner <michael@wagnertech.de>  Fri,  30 Dec 2022 16:54:48 +0100
+
