@@ -2,27 +2,18 @@
 set -e
 
 pushd csharp/mlistc >/dev/null
-	ln -s /usr/share/mbuild/makefile .
+	ln -sf /usr/share/mbuild/makefile .
 	echo "SOURCES=\\" >> make.pre
 	find . -name "*.cs" -exec echo "  "{}" \\" >> make.pre \;
 	echo >> make.pre
-	#echo "CSLIBS = -r:System.Configuration.dll" >> make.pre
-	echo "CSLIBS = -r:../mutil/mutil.dll" >> make.pre
+	echo "CSLIBS = -r:/usr/lib/mdoc-tools/mutil.dll -r:../mListDll/mlist.dll" >> make.pre
 popd >/dev/null
 
-rsync -av ../mDoc/csharp/mutil/ csharp/mutil/
-pushd csharp/mutil >/dev/null
-	ln -s /usr/share/mbuild/makefile .
+pushd csharp/mListDll >/dev/null
+	ln -sf /usr/share/mbuild/makefile .
 	echo "SOURCES=\\" >> make.pre
 	find . -name "*.cs" -exec echo "  "{}" \\" >> make.pre \;
 	echo >> make.pre
+	echo "CSLIBS = -r:/usr/lib/mdoc-tools/mdoclib.dll -r:/usr/lib/mdoc-tools/mutil.dll" >> make.pre
 popd >/dev/null
-#
-#pushd csharp/mDocLib >/dev/null
-#	ln -s /usr/share/mbuild/makefile .
-#	echo "SOURCES=\\" >> make.pre
-#	find . -name "*.cs" -exec echo "  "{}" \\" >> make.pre \;
-#	echo >> make.pre
-#	echo "CSLIBS = -r:../mutil/mutil.dll" >> make.pre
-#popd >/dev/null
 

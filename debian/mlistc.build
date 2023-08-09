@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-pushd csharp/mutil >/dev/null
-	make mutil.dll
+pushd csharp/mListDll >/dev/null
+	make mlist.dll
 popd >/dev/null
 
 pushd csharp/mlistc >/dev/null
