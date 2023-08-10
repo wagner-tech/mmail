@@ -1,4 +1,4 @@
-mmail (1.2) unstable; urgency=medium
+mmail (1.2-%BUILD%) unstable; urgency=medium
   * mlist command: new command: config
  -- Michael Wagner <michael@wagnertech.de>  Thu, 04 Nov 2021 20:03:04 +0100
 
