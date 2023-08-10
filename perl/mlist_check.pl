@@ -71,9 +71,12 @@ sub send_bounce_mail {
 	my $sender = shift;
 	my $text = shift;
 	
+	# eval server name
+	chomp(my $server = `/sbin/postconf -h myhostname`); 
+	
 	my $email = Email::Simple->create(
 	header => [
-		From    => '<>',
+		From    => "\"mlist Mail System\" <MAILER-DEAMON\@$server>",
 		To      => $sender,
 		Subject => 'Undelivered Mail Returned to Sender',
 	],
@@ -196,12 +199,16 @@ my @to_addrs = @ARGV;
 $sender =~ s/.*=.*=.*=(.*)=(.*)@.*/$2\@$1/;
 
 # check if $sender is not the name of a list. If so, do nothing
-exit 0 if (mMail::is_list($sender));
+if (mMail::is_list($sender)) {
+	::log("mail from list name $sender is discarded.");
+	exit 0;
+}
 
 my @not_permitted_lists;
 my @not_success_mails;
 foreach my $to (@to_addrs) {
 	if (! sender_is_permitted($sender, $to)) {
+		::log("$sender not permittet for $to");
 		push(@not_permitted_lists, $to);
 	}
 }

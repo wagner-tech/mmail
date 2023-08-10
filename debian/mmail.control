@@ -1,3 +1,8 @@
+Source: mmail
+Section: main
+Priority: optional
+Maintainer: WagnerTech UG <mail@wagnertech.de>
+
 Package: mmail
 Version: %BUILD%
 Section: base
