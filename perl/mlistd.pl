@@ -33,7 +33,7 @@ sub add_list {
 	close CONTFILT;
 	if (! grep (/$list@/, @contfilt)) {
 		open CONTFILT, ">>/etc/postfix/mmail/mlist.contfilt.regexp";
-		print CONTFILT "/$list@/ FILTER mlist_check:[127.0.0.1]";
+		print CONTFILT "/$list@/ FILTER mlist_check:[127.0.0.1]\n";
 		close CONTFILT;
 	}
 
