@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+BUILD_DIR=~/build
+mkdir -p $1/usr/lib/wtg
+cp $BUILD_DIR/csharp/mlistc/mlistc.exe $1/usr/lib/wtg
+cp $BUILD_DIR/csharp/mListDll/mlist.dll $1/usr/lib/wtg
+cp /usr/lib/mdoc-tools/* $1/usr/lib/wtg
+

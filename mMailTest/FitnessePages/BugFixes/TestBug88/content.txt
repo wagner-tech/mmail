@@ -12,7 +12,8 @@ Listen definieren
 |call script|mlist announce liste_mlist all|
 
 Mail an Liste senden
+!|test.util.CallScript|
 |call script|bin/smtp.pl liste.mlist@$HOSTNAME liste_mlist@$HOSTNAME < etc/MailAnhang.txt|
-|call script|sleep 3|
+|call script|sleep 10|
 |call script|test -f /var/mail/user1|
 |call script|!-test $(sudo grep "www.wagnertech.de" /var/mail/user1 |wc -l) -eq 2-!|
