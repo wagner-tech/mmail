@@ -1,9 +1,12 @@
+Source: mmail
+Section: main
+Priority: optional
+Maintainer: WagnerTech UG <mail@wagnertech.de>
+
 Package: mmail-vt
-Version: %BUILD%
 Section: base
 Priority: optional
 Architecture: all
 Depends: amavisd-new, libdbi-perl, libdbd-sqlite3-perl, libjson-perl, libfile-libmagic-perl
-Maintainer: WagnerTech UG <mail@wagnertech.de>
 Description: virus total extension for postfix / amavisd-new
 
