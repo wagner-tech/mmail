@@ -1,9 +1,10 @@
 Bug 107: In mlist.contfilt.regexp fehlt der Zeilenumbruch am Ende
 
-mlist-Konfigurateion löschen
+mlist-Konfiguration löschen
 
 !|test.util.CallScript|
-|call script|if [ -f /etc/postfix/mmail/mlist.contfilt.regexp ]; then sudo rm /etc/postfix/mmail/mlist.contfilt.regexp; fi|
+|call script|head -3 /etc/postfix/mmail/mlist.contfilt.regexp > /tmp/mlist.contfilt.regexp|
+|call script|sudo mv /tmp/mlist.contfilt.regexp /etc/postfix/mmail/mlist.contfilt.regexp|
 
 Listen anmelden
 |call script|sudo mmail enable mlist|
