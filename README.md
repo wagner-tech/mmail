@@ -9,35 +9,17 @@ mmail mailling list support. See mmail(8)
 ### mmail-vt
 virus total support for postfix. See mmail-vt(8)
 
-## Getting Started
+[Link to man pages](http://wagnertech.de/man)
 
-There are two possibilities to get this software: By installing the debian package from 
-wagnertech.de or building the package yourself.
+## Installation
 
-### Installing from package repositoy
-Add to your package sources
-```
-deb http://wagnertech.de/debian/ stable main
-```
-Download und import the key:
-```
-wget http://wagnertech.de/debian/conf/wagnertech.key
-sudo apt-key add wagnertech.key
-```
-Update and install:
-```
-sudo apt-get update
-sudo apt-get install mmail
-```
-### Building package from sources
-After cloning this repository
-```
-cd mmail/build
-./start_build
-./configure mmail <build_tag>
-make
-make deb
-```
+For installing this software use the prebuild debian packages. Installation hints
+can be found [here](http://hilfe.wagnertech.de/index.php/installation-von-wagnertech-software/)
+
+## Project Home Page
+
+[mMail home page](http://wp.wagnertech.de/?page_id=388)
+
 ## Versions
 
 see doc/mmail.changelog
