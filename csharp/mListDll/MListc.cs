@@ -1,6 +1,9 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
+/* code for these libraries can be obtained by
+ * git clone http://wagnertech.de/git/mDoc
+ */ 
 using mDoc;
 using mutil;
 
