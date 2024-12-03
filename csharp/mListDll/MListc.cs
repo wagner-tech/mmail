@@ -32,6 +32,9 @@ public class MListC {
         string strCmdText;
         System.Diagnostics.Process.Start(browser, html_file);
     }
+    static public void upload_pictures() {
+        
+    }
 }
 
 } // namespace

@@ -7,7 +7,7 @@ using MListc;
 using mutil;
 
 class MListClient {
-    static string[] pars = {"XmlFile", "Template", "Server", "Browser"};
+    static string[] pars = {"XmlFile", "Template", "Bilderverzeichnis", "Server", "Browser"};
     static string read_inkey(bool interactive) {
         var configs = Configuration.getInstance();
         string value;
@@ -49,6 +49,8 @@ class MListClient {
                 else Console.WriteLine("create_local_html returned: {0}", new ReturnCode(rc).ToString());
                 break;
             case 4: MListC.show_local_html();
+                break;
+            case 5: MListC.upload_pictures();
                 break;
             default: Console.WriteLine("Fehlerhafte Eingabe: "+Convert.ToString(selection));
                 break;
