@@ -1,6 +1,9 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
+/* code for these libraries can be obtained by
+ * git clone http://wagnertech.de/git/mDoc
+ */ 
 using mDoc;
 using mutil;
 
@@ -28,6 +31,9 @@ public class MListC {
         string html_file = Regex.Replace(xml_file, @"\..*$", ".html");
         string strCmdText;
         System.Diagnostics.Process.Start(browser, html_file);
+    }
+    static public void upload_pictures() {
+        
     }
 }
 
