@@ -1,2 +1,0 @@
-|test.util.CallScript|
-|call script|mtestinfo mlistc mdoc-tools|
