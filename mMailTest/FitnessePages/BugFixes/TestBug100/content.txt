@@ -3,10 +3,9 @@ Sollverhalten: Wenigstens eine Logmeldung
 
 Fehlertext 2: die Bounce-Mail hat kein FROM (Brief-Header)
 
-Log löschen und neu starten
+Cursor setzen
 !|test.util.CallScript|
-|call script|sudo rm /var/log/mail.log|
-|call script|sudo systemctl restart rsyslog|
+|call script|!-journalctl --show-cursor -n1 |grep 'cursor' |sed "s/-- cursor: //" >log.cursor-!|
 
 mlist einschalten
 |call script|sudo mmail enable mlist|
@@ -15,9 +14,10 @@ Liste definieren, an die nur Listenteilnehmer senden dürfen
 |call script|mlist announce etc/liste.mlist list|
 
 Mail an Liste von liste@... schicken. Mail "verschwindet", Logintrag prüfen
+!|test.util.CallScript|
 |call script|bin/smtp.pl -s liste@${HOSTNAME} liste.mlist@${HOSTNAME} < etc/MailAnhang.txt|
 |call script|sleep 3|
-|call script|grep "liste@${HOSTNAME}.*discarded" /var/log/mail.log|
+|call script|!-journalctl -c $(cat log.cursor) -u postfix@- |grep "liste@${HOSTNAME}.*discarded"-!|
 
 Mail an Liste von xxx schicken
 |call script|if [ -f /var/mail/${USER} ]; then sudo rm /var/mail/${USER}; fi|
