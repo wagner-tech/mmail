@@ -1,3 +1,7 @@
+mmail (0.4-%BUILD%) unstable; urgency=medium
+  * Debian12 adjustments
+ -- Michael Wagner <michael@wagnertech.de>  Wed, 08 Jan 2025 20:03:04 +0100
+
 mmail (0.3-%BUILD%) unstable; urgency=medium
   * back to WagnerTech implementation
  -- Michael Wagner <michael@wagnertech.de>  Mon, 29 Apr 2024 20:03:04 +0100
