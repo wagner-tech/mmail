@@ -145,7 +145,11 @@ sub process_mail {
 		}
 		$sender = $SENDER if (length $SENDER);
 		$mobj->header_str_set("Subject" => "$SUBJECT_PREFIX ".$mobj->header("Subject")) if (length $SUBJECT_PREFIX);
-		$mobj->header_str_set("From" => $FROM) if (length $FROM);
+		if (length $FROM) {
+			$mobj->header_str_set("From" => $FROM);
+			# reset DKIM
+			$mobj->header_set("DKIM-Signature");
+		}
 	}
 	
 	# check mail footer
