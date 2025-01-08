@@ -7,6 +7,6 @@ Package: mmail-vt
 Section: base
 Priority: optional
 Architecture: all
-Depends: amavisd-new, libdbi-perl, libdbd-sqlite3-perl, libjson-perl, libfile-libmagic-perl
+Depends: amavisd-new | amavis, libdbi-perl, libdbd-sqlite3-perl, libjson-perl, libfile-libmagic-perl, libfile-mimeinfo-perl, liblwp-useragent-chicaching-perl
 Description: virus total extension for postfix / amavisd-new
 
