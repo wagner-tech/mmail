@@ -1,0 +1,19 @@
+Fehlermeldung: Bei mehreren Listen wird der Footer mehrfach angehängt
+
+mlist einschalten
+
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+
+Listen definieren
+|call script|mlist announce etc/liste.mlist all|
+|call script|cp etc/liste.mlist liste_mlist|
+|call script|mlist announce liste_mlist all|
+
+Mail an Liste senden
+!|test.util.CallScript|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME liste_mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|sleep 10|
+|call script|test -f /var/mail/user1|
+|call script|!-test $(sudo grep "www.wagnertech.de" /var/mail/user1 |wc -l) -eq 2-!|
