@@ -1,0 +1,21 @@
+# amavis_vt configuration
+# here the default values:
+
+# $db_file = "/var/lib/amavis/amavis-vt.db";
+# $api_key = "";
+# $min_file_size = 100;
+# $log_level = 1;
+# $threshold = 2;
+# @scan_only_files = ();
+# @dont_scan_files = ('^text\/', '^image\/');
+# $rescan_after_h#s = 10;
+# $url='https://www.virustotal.com/vtapi/v2/file/report';
+# $max_virus_names = 3;
+
+
+#$db_file = "/home/mint18/tmp/amavis-vt.db";
+$api_key = "3e7ab8bce2c1d25ae5853d2e796c465944305f7afc62491b952dd2e5d8202964";
+$min_file_size = 10;
+@dont_scan_files = ();
+
+1;

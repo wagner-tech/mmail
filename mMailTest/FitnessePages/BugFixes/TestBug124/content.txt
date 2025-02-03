@@ -1,0 +1,14 @@
+Bei der Listenbearbeitung muss ein bereits vorhandener DKIM-Header entfernt werden, falls der Absender umgeschrieben wird.
+
+Listen anmelden
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+|call script|mlist announce etc/liste.mlist all|
+
+Mail an Liste schicken
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+|call script|bin/smtp.pl liste.mlist@${HOSTNAME} < etc/MailDKIM.txt|
+|call script|sleep 3|
+|call script|! sudo grep "DKIM" /var/mail/user1|
+Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
+postfix nicht ordentlich gestartet.

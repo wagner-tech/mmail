@@ -1,0 +1,19 @@
+Fehlertext:  mlist-Absendercheck darf nicht case sensitive sein
+
+mlist einschalten
+
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+
+Liste definieren, an die nur die Listenteilnehmer senden dürfen, also auch USER1
+|call script|mlist announce etc/liste.mlist list|
+
+Mail an Liste schicken
+|call script|!-sudo rm /var/mail/user1 || true-!|
+|call script|!-sudo rm /var/mail/user2 || true-!|
+|call script|bin/smtp.pl -s USER1@localhost liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|sudo grep "neue Liste" /var/mail/user2|
+
+Feature ausschalten
+|call script|sudo mmail disable mlist|

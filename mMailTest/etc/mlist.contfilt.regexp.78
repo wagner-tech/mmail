@@ -1,0 +1,4 @@
+# for more info see mmail(8)
+
+/mlist@example.com/ FILTER mlist_check:[127.0.0.1]
+

@@ -1,0 +1,50 @@
+Return-Path: <michael@wagnertech.de>
+X-Original-To: bonzius@wagnertech.de
+Delivered-To: bonzius@wagnertech.de
+Received: from [192.168.1.15] (ipbcc037c6.dynamic.kabel-deutschland.de [188.192.55.198])
+	by wagnertech.de (Postfix) with ESMTPSA id BA76657DC1DF
+	for <bonzius@wagnertech.de>; Wed,  6 Sep 2017 11:37:36 +0200 (CEST)
+To: 'Michael Wagner' <bonzius@wagnertech.de>
+From: "Wagner Michael, Dr.sc.nat." <michael@wagnertech.de>
+Subject: Testvirus
+Message-ID: <5abef079-a6c4-980c-f5f0-8e26074ff7a0@wagnertech.de>
+Date: Wed, 6 Sep 2017 11:37:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+ boundary="------------95E883B231AA33365AC4CD08"
+Content-Language: de-DE
+
+This is a multi-part message in MIME format.
+--------------95E883B231AA33365AC4CD08
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+
+-- 
+Dr.sc.nat. Dipl.-Phys.
+Michael J.M. Wagner B.A.
+mailto:michael@wagnertech.de
+--
+WagnerTech UG (haftungsbeschränkt)
+Informationstechnik und physikalische Anwendungen
+Turfstraße 18a
+81929 München
+Tel: 089/63852047
+
+Geschäftsführer: Michael Wagner
+HRB: 178822
+http://www.wagnertech.de
+
+--------------95E883B231AA33365AC4CD08
+Content-Type: text/plain; charset=UTF-8;
+ name="Virus.txt"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="Virus.txt"
+
+WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1U
+RVNULUZJTEUhJEgrSCoK
+--------------95E883B231AA33365AC4CD08--
+

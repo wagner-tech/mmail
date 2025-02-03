@@ -1,0 +1,4 @@
+<configuration>
+<entry key="XmlFile">test.xml</entry>
+<entry key="Template">test.tpl</entry>
+</configuration>

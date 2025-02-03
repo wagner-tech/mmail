@@ -15,7 +15,7 @@ die "mlist service not properly installed. See 'mmail list'." unless $rc eq 0;
 my $mlist_status = `export PATH="/usr/sbin/:\$PATH"; mmail list |grep mlist`;
 chomp $mlist_status;
 die "mlist service not activated. See 'man mlist'." unless substr($mlist_status, -1) eq 1;
-chmod 755, $ENV{"HOME"}; # read access for mailing lists
+chmod 0755, $ENV{"HOME"}; # read access for mailing lists
 
 my $ret = 0;
 if ($command eq "announce") {

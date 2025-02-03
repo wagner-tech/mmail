@@ -1,0 +1,38 @@
+!1 Test aller Features
+
+Andere Scanner ausschalten
+!|test.util.CallScript|
+|call script|!-echo "@av_scanners=();" | sudo dd of=/etc/amavis/conf.d/54_test-!|
+
+Alle Features einschalten
+|call script|sudo cp etc/amavis_vt.cf /etc/|
+|call script|sudo mmail enable amavisd|
+|call script|sudo mmail enable amavis-vt|
+|call script|sudo mmail enable mlist|
+|call script|sleep 2|
+
+Liste definieren
+|call script|mlist announce etc/liste.mlist all|
+
+Normale Mail an Verteiler kommt durch:
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|sudo grep "neue Liste" /var/mail/user1|
+Anmerkung: Wenn das Versenden der Mail den Fehler "Can't call method "mail" on an undefined value at ..." liefert, ist der
+postfix nicht ordentlich gestartet.
+
+Testvirus bleibt hängen
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailVirus.txt|
+|call script|sleep 3|
+|call script|! grep "Virus.txt" /var/mail/user1|
+
+Alle Features ausschalten
+|call script|sudo mmail disable mlist|
+|call script|sudo mmail disable amavis-vt|
+|call script|sudo mmail disable amavisd|
+
+Andere Scanner wieder einschalten
+|call script|sudo rm /etc/amavis/conf.d/54_test|
+

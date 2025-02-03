@@ -1,0 +1,23 @@
+Fehlermeldung: Leeres /var/mmail/LIST.config führt zu Absturz
+
+mlist einschalten
+
+!|test.util.CallScript|
+|call script|sudo mmail enable mlist|
+|call script|if [ -f /var/mail/user1 ]; then sudo rm /var/mail/user1; fi|
+
+Liste löschen, damit config file weg ist
+|call script|mlist delete liste|
+|call script|! ls /var/mmail/liste.config|
+
+Liste definieren, an die jeder senden darf
+|call script|mlist announce etc/liste.mlist all|
+
+Config anlegen und wieder leeren
+|call script|mlist config liste SENDER=bla@blub|
+|call script|mlist config liste SENDER|
+
+Mail an Liste senden
+|call script|bin/smtp.pl liste.mlist@$HOSTNAME < etc/MailAnhang.txt|
+|call script|sleep 3|
+|call script|test -f /var/mail/user1|
